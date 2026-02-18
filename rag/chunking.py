@@ -18,7 +18,7 @@ class ChunkPolicy:
     policy_version: str = "v1"
     target_tokens: int = 550
     overlap_tokens: int = 80
-    min_tokens: int = 200
+    min_tokens: int = 100
     max_tokens: int = 750
 
 @dataclass(frozen=True)
@@ -611,6 +611,10 @@ def process_one_doc(
 
     return rows
 
+try:
+    from tqdm import tqdm
+except Exception:
+    tqdm = None
 
 def build_chunks_corpus(
     input_dir: Path,
@@ -622,15 +626,27 @@ def build_chunks_corpus(
     docs = iter_raw_docs(input_dir)
 
     all_rows: List[ChunkRow] = []
-    for d in docs:
+
+    iterator = docs
+    if tqdm is not None:
+        iterator = tqdm(docs, total=len(docs), desc="Chunking", unit="doc")
+
+    for d in iterator:
         try:
-            all_rows.extend(process_one_doc(d, policy, tc))
+            rows = process_one_doc(d, policy, tc)
+            all_rows.extend(rows)
+
+            # Optional: show extra info in the bar
+            if tqdm is not None and hasattr(iterator, "set_postfix"):
+                iterator.set_postfix_str(f"{d.source} (+{len(rows)} chunks, total {len(all_rows)})")
+
         except Exception as e:
             raise RuntimeError(f"Failed processing {d.source}: {e}") from e
 
     write_parquet(all_rows, out_parquet)
     stats = compute_stats(all_rows)
     write_json(stats, stats_json)
+
 
 
 
