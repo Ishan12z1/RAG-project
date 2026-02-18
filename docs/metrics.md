@@ -22,9 +22,12 @@ Evaluation :
         1. Split the answer and take the lines that has some claims.  
         2. check if all the claims are genuin (supported and by a relevant document)  
         3. if all claims are genuin the groundedness will be 1 for this output.      
-           if a single calim is not genuin then the output will be marked as 0.   
-    
+           if a single calim is not genuin then the output will be marked as 0. 
+
     formula = 1 / N * Σ unsupported(q)      
     7/9 means 7 claims are not supported  
-
+    
+    Why this stric rules :  
+        - becasue if a single claim is unsupported the whole output might be wrong or hallucinated which is worse especially in case of medical field. 
+        
 
