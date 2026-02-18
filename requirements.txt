@@ -1,0 +1,5 @@
+pandas
+tiktoken
+python-docx
+pyarrow
+tqdm
