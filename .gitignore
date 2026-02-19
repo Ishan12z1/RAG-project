@@ -1,3 +1,6 @@
 .rag/
 /docs/steps.md
 /data/downloads/
+data/
+*__pycache__/
+*.pyc
