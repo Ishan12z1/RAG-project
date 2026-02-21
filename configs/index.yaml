@@ -1,0 +1,13 @@
+index_type: "flat_ip"                 # baseline first
+top_k_default: 5
+storage:
+  root_dir: "data/index"
+
+ivf:
+  nlist: 2048
+  nprobe: 16
+
+hnsw:
+  M: 32
+  ef_construction: 200
+  ef_search: 64
