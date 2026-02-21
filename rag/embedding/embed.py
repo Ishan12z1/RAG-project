@@ -10,7 +10,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from rag.utils.config_utils import load_yaml,stable_hash_dict
-from rag.paths import embeddings_dir
+from rag.utils.paths import embeddings_dir
 from rag.embedding.embedding_provider import ProviderSpec
 from rag.embedding.hf_embeddings import SentTransEmb
 
