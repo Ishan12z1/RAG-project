@@ -3,3 +3,6 @@ tiktoken
 python-docx
 pyarrow
 tqdm
+PyYAML
+torch
+sentence-transformers
