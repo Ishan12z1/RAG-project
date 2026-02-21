@@ -4,8 +4,8 @@
   "index_type": "flat_ip",
   "num_vectors": 41,
   "dim": 384,
-  "build_seconds": 0.0,
+  "build_seconds": 0.0041,
   "approx_index_bytes": 62976,
   "index_path": "data/index/113723aae9b1/faiss.index",
-  "emb_dir": "data/embeddings/2954117bb965"
+  "emb_dir": "data/embeddings/20260221_172629__2954117bb965"
 }
