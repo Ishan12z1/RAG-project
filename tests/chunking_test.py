@@ -99,6 +99,31 @@ def write_chunk_samples(df: pd.DataFrame, out_path: Path, k: int = 12, seed: int
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
+def check_chunks(df):
+    
+    REQUIRED = ["chunk_id", "chunk_text"]
+
+    missing = [c for c in REQUIRED if c not in df.columns]
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
+
+    if df["chunk_id"].isna().any():
+        raise ValueError("chunk_id contains nulls")
+
+    if df["chunk_id"].duplicated().any():
+        dupes = df.loc[df["chunk_id"].duplicated(), "chunk_id"].head(10).tolist()
+        raise ValueError(f"chunk_id has duplicates (sample): {dupes}")
+
+    if df["chunk_text"].isna().any():
+        raise ValueError("text contains nulls")
+
+    empty_text = (df["chunk_text"].astype(str).str.strip() == "").sum()
+    if empty_text > 0:
+        raise ValueError(f"Found {empty_text} empty text chunks")
+    
+    print("Chunking validation passed")
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="QA checks for RAG chunk corpus")
     p.add_argument(
@@ -162,6 +187,8 @@ def main() -> None:
         raise SystemExit(2)
 
     df = pd.read_parquet(parquet_path)
+    # print(df)
+    check_chunks(df)
 
     policy = ChunkPolicy(
         policy_version=args.policy_version,
