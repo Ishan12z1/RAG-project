@@ -6,3 +6,4 @@ tqdm
 PyYAML
 torch
 sentence-transformers
+faiss-cpu
