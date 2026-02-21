@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 from rag.utils.config_utils import load_yaml,stable_hash_dict
 from rag.utils.paths import embeddings_dir
+from rag.utils.helper_functions import _l2_normalize
 from rag.embedding.embedding_provider import ProviderSpec
 from rag.embedding.hf_embeddings import SentTransEmb
 
@@ -24,10 +25,7 @@ def _clean_text(s:str,max_chars:int)->str:
     return s
 
 # normalizing helper function for normalizing vectors and the query so that cosine similarity becomes inner product
-def _l2_normalize(mat:np.ndarray)->np.ndarray:
-    norms=np.linalg.norm(mat,axis=1,keepdims=True)
-    norms=np.clip(norms,1e-12,None) # we are clipping to prevent divide by zero error 
-    return mat/norms
+
 
 
 #Sorting by chunk_id ensures stable alignment: row 0 in vectors always corresponds to the same chunk_id.
@@ -64,6 +62,10 @@ def main(chunks_path:str="data//processed_chunks.parquet",cfg_path:str="configs/
     max_chars=int(cfg.get("max_text_chars",8000))
     texts=[_clean_text(t,max_chars) for t in df['text'].tolist()]
 
+    if str(cfg.get("model_name", "")).startswith("BAAI/bge"):
+        prefix = "passage: "
+        texts = [prefix + t[: max_chars - len(prefix)] for t in texts]
+
     # load the configs 
     batch_size=int(cfg.get("batch_size",64))
     normalize=bool(cfg.get("normalize",True))
@@ -85,7 +87,7 @@ def main(chunks_path:str="data//processed_chunks.parquet",cfg_path:str="configs/
     first_arr=np.array(first_vecs,dtype=np.float32)
     if first_arr.ndim !=2:
         raise ValueError(f"Unexpected embedding shape: {first_arr.shape}")
-    # infering the dimensino d 
+    # infering the dimension d 
     d=int(first_arr.shape[1])
 
     N=len(texts)
