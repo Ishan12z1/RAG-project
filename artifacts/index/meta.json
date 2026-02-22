@@ -1,0 +1,11 @@
+{
+  "index_hash": "113723aae9b1",
+  "index_type": "flat_ip",
+  "metric": "ip",
+  "params": {},
+  "emb_hash": "2954117bb965",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "dim": 384,
+  "num_vectors": 41,
+  "created_at_unix": 1771694835
+}

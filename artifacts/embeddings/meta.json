@@ -1,0 +1,21 @@
+{
+  "emb_hash": "2954117bb965",
+  "model_name": "BAAI/bge-small-en-v1.5",
+  "dim": 384,
+  "normalized": true,
+  "num_chunks": 41,
+  "max_text_chars": 8000,
+  "batch_size": 64,
+  "created_at_unix": 1771694801,
+  "source_chunks_path": "data//processed_chunks.parquet",
+  "config": {
+    "model_name": "BAAI/bge-small-en-v1.5",
+    "batch_size": 64,
+    "normalize": true,
+    "max_text_chars": 8000,
+    "storage": {
+      "root_dir": "data/embeddings"
+    }
+  },
+  "embed_seconds": 4.203
+}
