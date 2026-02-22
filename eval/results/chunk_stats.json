@@ -1,15 +1,9 @@
 {
   "total_docs": 11,
   "total_chunks": 41,
-  "token_min": 226,
-  "token_median": 515,
-  "token_p95": 549,
-  "token_max": 550,
-  "above_max_tokens": 41,
-  "below_min_tokens": 0,
-  "chunks_per_doc_min": 1,
-  "chunks_per_doc_median": 2,
-  "chunks_per_doc_p95": 7,
-  "chunks_per_doc_max": 10,
-  "top_repeated_lines": []
+  "token_count_min": 226,
+  "token_count_median": 515,
+  "token_count_p95": 549,
+  "token_count_max": 550,
+  "duplicate_chunks_exact": 0
 }
