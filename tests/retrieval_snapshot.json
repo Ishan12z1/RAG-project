@@ -1,0 +1,191 @@
+{
+  "generated_at": "2026-02-22T16:44:28.398966Z",
+  "index_dir": "artifacts/index",
+  "embeddings_dir": "artifacts/embeddings",
+  "chunks_path": "data/processed_chunks.parquet",
+  "top_k": 5,
+  "oversample": 10,
+  "items": [
+    {
+      "query": "What is diabetes?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "9a0480e055ad2887",
+        "cdc7f31ab8458ce1",
+        "0cb840e1ec50a273",
+        "224ed7dad435c3e2",
+        "e6364ae6b168503a"
+      ],
+      "expected_doc_ids": [
+        "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+        "57ab10af48db60cf98ec6855500911e338d8d3cc",
+        "e72d2584996150826f466b1105ed94dc17a5a0cb",
+        "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+        "28fb4bfaaac428d5017490fd5c78de3ffaace6f1"
+      ]
+    },
+    {
+      "query": "What is the difference between type 1 and type 2 diabetes?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "9a0480e055ad2887",
+        "4c7596d0d8493f8d",
+        "224ed7dad435c3e2",
+        "0cb840e1ec50a273",
+        "c704821c3d06d771"
+      ],
+      "expected_doc_ids": [
+        "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+        "55a41c269d61533e31dd13a9a5ad6d239afe64c8",
+        "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+        "e72d2584996150826f466b1105ed94dc17a5a0cb",
+        "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312"
+      ]
+    },
+    {
+      "query": "What is blood glucose (blood sugar)?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "e6364ae6b168503a",
+        "1a9a052aa2788615",
+        "535036b06c89b21f",
+        "9a0480e055ad2887",
+        "58079dcbf8a99f31"
+      ],
+      "expected_doc_ids": [
+        "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+        "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+        "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+        "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+        "026562a5a26293879b86489200df76cb411c913c"
+      ]
+    },
+    {
+      "query": "What is A1C and why is it important?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "e6364ae6b168503a",
+        "5bf82f7ff6ad239c",
+        "58079dcbf8a99f31",
+        "d7884a45b87d6916",
+        "0cb840e1ec50a273"
+      ],
+      "expected_doc_ids": [
+        "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+        "026562a5a26293879b86489200df76cb411c913c",
+        "026562a5a26293879b86489200df76cb411c913c",
+        "026562a5a26293879b86489200df76cb411c913c",
+        "e72d2584996150826f466b1105ed94dc17a5a0cb"
+      ]
+    },
+    {
+      "query": "What is hypoglycemia?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "535036b06c89b21f",
+        "a9c75e7a5722ef02",
+        "e6364ae6b168503a",
+        "12a6b0289c15d8d0",
+        "1a9a052aa2788615"
+      ],
+      "expected_doc_ids": [
+        "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+        "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+        "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+        "026562a5a26293879b86489200df76cb411c913c",
+        "28fb4bfaaac428d5017490fd5c78de3ffaace6f1"
+      ]
+    },
+    {
+      "query": "What are common symptoms of diabetes?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "0f91adf58982ad9b",
+        "a9fca6aa2c80683a",
+        "535036b06c89b21f",
+        "cdc7f31ab8458ce1",
+        "0cb840e1ec50a273"
+      ],
+      "expected_doc_ids": [
+        "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+        "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+        "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+        "57ab10af48db60cf98ec6855500911e338d8d3cc",
+        "e72d2584996150826f466b1105ed94dc17a5a0cb"
+      ]
+    },
+    {
+      "query": "How does insulin work in the body?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "0cb840e1ec50a273",
+        "e6364ae6b168503a",
+        "9a0480e055ad2887",
+        "224ed7dad435c3e2",
+        "58079dcbf8a99f31"
+      ],
+      "expected_doc_ids": [
+        "e72d2584996150826f466b1105ed94dc17a5a0cb",
+        "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+        "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+        "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+        "026562a5a26293879b86489200df76cb411c913c"
+      ]
+    },
+    {
+      "query": "What are complications of uncontrolled diabetes?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "cdc7f31ab8458ce1",
+        "0f91adf58982ad9b",
+        "c704821c3d06d771",
+        "c282ef6483693b52",
+        "4c7596d0d8493f8d"
+      ],
+      "expected_doc_ids": [
+        "57ab10af48db60cf98ec6855500911e338d8d3cc",
+        "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+        "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+        "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+        "55a41c269d61533e31dd13a9a5ad6d239afe64c8"
+      ]
+    },
+    {
+      "query": "What is prediabetes?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "9a0480e055ad2887",
+        "4c7596d0d8493f8d",
+        "cdc7f31ab8458ce1",
+        "c704821c3d06d771",
+        "224ed7dad435c3e2"
+      ],
+      "expected_doc_ids": [
+        "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+        "55a41c269d61533e31dd13a9a5ad6d239afe64c8",
+        "57ab10af48db60cf98ec6855500911e338d8d3cc",
+        "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+        "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed"
+      ]
+    },
+    {
+      "query": "What is diabetic ketoacidosis (DKA)?",
+      "top_k": 5,
+      "expected_chunk_ids": [
+        "cea61df1b64f77cd",
+        "e861dff58d579f03",
+        "b2e94f5814691bcc",
+        "cdc7f31ab8458ce1",
+        "12a6b0289c15d8d0"
+      ],
+      "expected_doc_ids": [
+        "28cd4c2c8cb92bc00ef8343e302c951328b13ef0",
+        "28cd4c2c8cb92bc00ef8343e302c951328b13ef0",
+        "026562a5a26293879b86489200df76cb411c913c",
+        "57ab10af48db60cf98ec6855500911e338d8d3cc",
+        "026562a5a26293879b86489200df76cb411c913c"
+      ]
+    }
+  ],
+  "notes": "Golden snapshot for retrieval determinism. Regenerate only when you intentionally change chunking/embeddings/index params."
+}
