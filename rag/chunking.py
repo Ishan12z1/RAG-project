@@ -9,7 +9,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
-
+from rag.utils.run_utils import new_run_id, resolve_run_dir
 import pandas as pd
 
 
@@ -33,6 +33,7 @@ class ExtractedDoc:
     raw: RawDoc
     title: str
     normalized_text: str
+    url: Optional[str] = None
     page_texts: Optional[List[str]] = None  # only set for PDFs
 
 @dataclass(frozen=True)
@@ -55,6 +56,7 @@ class ChunkRow:
     token_count: int
     checksum: str
     chunk_text: str
+    url: Optional[str] 
     page_start: Optional[int] = None
     page_end: Optional[int] = None
 
@@ -227,6 +229,15 @@ def is_heading_line(line: str) -> Optional[str]:
             caps = sum(ch.isupper() for ch in s if ch.isalpha())
             if caps / max(1, letters) > 0.6:
                 return s
+    return None
+
+_SOURCE_URL_RE = re.compile(r"^\s*Source:\s*(https?://\S+)\s*$", re.IGNORECASE)
+
+def extract_source_url(normalized_text: str) -> Optional[str]:
+    for ln in normalized_text.splitlines():
+        m = _SOURCE_URL_RE.match(ln.strip())
+        if m:
+            return m.group(1)
     return None
 
 # 
@@ -573,7 +584,7 @@ def process_one_doc(
     raw_text, page_texts = extract_text_dispatch(doc)
     normalized = normalize_text(raw_text)
     title = guess_title(doc.source, normalized)
-
+    url = extract_source_url(normalized)
     spans = build_spans(normalized)
     spans = expand_spans(normalized, spans, policy, tc)
 
@@ -599,6 +610,7 @@ def process_one_doc(
                 doc_id=doc.doc_id,
                 source=doc.source,
                 title=title,
+                url=url,
                 section_path=section_path,
                 chunk_index=idx,
                 start_offset=s,
@@ -673,6 +685,12 @@ def main() -> None:
         min_tokens=args.min_tokens,
         max_tokens=args.max_tokens,
     )
+
+    # run_id=args.run_id or new_run_id()
+    # run_base=resolve_run_dir(run_id,create=True)
+
+    # out_parquet = run_base / "processed_chunks.parquet"
+    # stats_json = run_base / "chunk_stats.json"  # or put under a subdir if you want
 
     build_chunks_corpus(
         input_dir=Path(args.input_dir),
