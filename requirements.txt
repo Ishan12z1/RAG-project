@@ -7,3 +7,4 @@ PyYAML
 torch
 sentence-transformers
 faiss-cpu
+pytest
