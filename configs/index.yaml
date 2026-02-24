@@ -1,13 +1,15 @@
-index_type: "flat_ip"                 # baseline first
-top_k_default: 5
+# index_type: "flat_ip"                 # baseline first
+# top_k_default: 5
+# storage:
+#   root_dir: "data/index/flat_ip"
+
+# ivf:
+#   nlist: 2048
+#   nprobe: 16
+
+index_type: "hnsw_ip"
+M: 32
+ef_construction: 200
+ef_search: 64
 storage:
-  root_dir: "data/index"
-
-ivf:
-  nlist: 2048
-  nprobe: 16
-
-hnsw:
-  M: 32
-  ef_construction: 200
-  ef_search: 64
+  root_dir: "data/index/hnsw_ip"
