@@ -97,14 +97,13 @@ USER_TEMPLATE = (
 )
 
 
-def build_prompt(question: str, chunks: Sequence[RetrievedChunk]) -> Dict[str, str]:
+def build_prompt(question: str, evidence_block: str) -> Dict[str, str]:
     """
     Returns a dict suitable for chat APIs:
       {"system": ..., "user": ...}
 
     Keep this function pure/deterministic: same inputs -> same prompt.
     """
-    evidence_block, _items = build_evidence_block(chunks)
     user = USER_TEMPLATE.format(query=question.strip(), evidence=evidence_block)
     return {"system": SYSTEM_GROUNDED_QA, "user": user}
 
