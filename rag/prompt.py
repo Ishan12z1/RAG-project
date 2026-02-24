@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# Prompt version v1
 from dataclasses import dataclass
 from typing import Any,Dict,Sequence,Tuple, List
 from rag.retrieval.retrieve import RetrievedChunk, Citation
