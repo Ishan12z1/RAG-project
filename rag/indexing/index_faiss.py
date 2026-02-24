@@ -48,6 +48,30 @@ def build_flat_l2_index(vecs:np.ndarray)->faiss.Index:
     index.add(vecs)
     return index
 
+def build_hnsw_ip(vecs:np.ndarray,M:int=32,ef_construction:int=200,ef_search:int=50)->faiss.Index:
+    d=vecs.shape[1]
+    index=faiss.IndexHNSWFlat(d,M,faiss.METRIC_INNER_PRODUCT)
+    index.hnsw.efConstruction = ef_construction
+    index.hnsw.efSearch = ef_search
+    index.add(vecs)
+    return index
+
+def build_hnsw_l2_index(
+    vecs: np.ndarray,
+    M: int = 32,
+    ef_construction: int = 200,
+    ef_search: int = 50,
+) -> faiss.Index:
+    """
+    HNSW index with L2 distance.
+    """
+    d = vecs.shape[1]
+    index = faiss.IndexHNSWFlat(d, M, faiss.METRIC_L2)
+    index.hnsw.efConstruction = ef_construction
+    index.hnsw.efSearch = ef_search
+    index.add(vecs)
+    return index
+
 def main()->None:
     ap=argparse.ArgumentParser()
     ap.add_argument("--index_cfg",default="configs/index.yaml")
@@ -80,6 +104,12 @@ def main()->None:
     elif index_type=="flat_l2":
         index=build_flat_l2_index(vecs)
         metric="l2"
+    elif index_type=='hnsw_ip':
+        M=int(index_cfg.get("M",32))
+        ef_construction=int(index_cfg.get("ef_construction",32))
+        ef_search=int(index_cfg.get("ef_search",64))
+        index=build_hnsw_ip(vecs,M,ef_construction,ef_search)
+        metric="ip"
     else:
         raise ValueError(f"Unsupported index_type : {index_type}")
 
