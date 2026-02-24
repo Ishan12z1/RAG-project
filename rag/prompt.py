@@ -7,8 +7,7 @@ from rag.retrieval.retrieve import RetrievedChunk, Citation
 from rag.utils.contracts import EvidenceItem
 
 CITATION_TAG_PREFIX = "C"  # [C1], [C2], ...
-
-
+PROMPT_VERSION="v2"
 
 
 # we are converting each chunk into a Evidence item format 
@@ -52,17 +51,16 @@ def build_evidence_block(
     items=assign_citation_tags(use)
 
     lines:List[str]=[]
-    lines.append("EVIDENCE (use only this evidence for factual claims):")
     for it in items:
         c= it.citation
         header=(
             f"{it.citation_tag} "
-            f"doc_id={getattr(c, 'doc_id', '')} | "
-            f"title={getattr(c, 'title', '')} | "
-            f"section={getattr(c, 'section', '')} | "
-            f"chunk_id={getattr(c, 'chunk_id', '')} | "
-            f"source={getattr(c, 'source', '')} | "
-            f"url={getattr(c, 'url', '')}"
+            f"doc_id={getattr(c, 'doc_id', 'unknown')} | "
+            f"title={getattr(c, 'title', 'unknown')} | "
+            f"section={getattr(c, 'section', 'unknown')} | "
+            f"chunk_id={getattr(c, 'chunk_id', 'unknown')} | "
+            f"source={getattr(c, 'source', 'unknown')} | "
+            f"url={getattr(c, 'url', 'none')}"
         )
         lines.append(header)
         lines.append(_truncate(it.text,max_chars_per_chunk))
@@ -72,24 +70,31 @@ def build_evidence_block(
     return "\n".join(lines).rstrip() +"\n", items
 
 
-SYSTEM_GROUNDED_QA = """You are a grounded assistant.
-Use ONLY the EVIDENCE provided. Do not use outside knowledge.
-If the evidence is insufficient, say you don’t have enough information.
+SYSTEM_GROUNDED_QA = (
+    "You are a grounded medical QA assistant.\n"
+    "You must follow these rules:\n"
+    "1) Use ONLY the EVIDENCE provided. Do not use outside knowledge.\n"
+    "2) Every bullet MUST end with citations in square brackets using the evidence tags, "
+    "like [C1] or [C1, C2].\n"
+    "3) If the EVIDENCE is insufficient to answer, respond with:\n"
+    "   ABSTAIN: <one sentence>\n"
+    "   NEED: <up to 3 clarifying items>\n"
+    "4) Do not cite sources not in EVIDENCE.\n"
+    f"PromptVersion: {PROMPT_VERSION}\n"
+)
 
-Citation rules:
-- Every factual claim must cite at least one evidence tag like [C1].
-- If a sentence contains multiple claims, cite all relevant tags.
-- Do NOT invent citations. Only use tags that appear in the evidence block.
-- Do NOT cite if you are stating a limitation (e.g., "the evidence doesn't say").
-"""
-
-USER_TEMPLATE = """Question:
-{question}
-
-{evidence_block}
-
-Answer:
-"""
+USER_TEMPLATE = (
+    "QUESTION:\n{query}\n\n"
+    "EVIDENCE:\n"
+    "{evidence}\n\n"
+    "OUTPUT FORMAT (choose exactly one):\n"
+    "A) Answer (2–5 bullets):\n"
+    "- <claim>. [C1]\n"
+    "- <claim>. [C1, C2]\n\n"
+    "B) Abstain:\n"
+    "ABSTAIN: <one sentence>\n"
+    "NEED: (1) ... (2) ... (3) ...\n"
+)
 
 
 def build_prompt(question: str, chunks: Sequence[RetrievedChunk]) -> Dict[str, str]:
@@ -100,5 +105,6 @@ def build_prompt(question: str, chunks: Sequence[RetrievedChunk]) -> Dict[str, s
     Keep this function pure/deterministic: same inputs -> same prompt.
     """
     evidence_block, _items = build_evidence_block(chunks)
-    user = USER_TEMPLATE.format(question=question.strip(), evidence_block=evidence_block)
+    user = USER_TEMPLATE.format(query=question.strip(), evidence=evidence_block)
     return {"system": SYSTEM_GROUNDED_QA, "user": user}
+
