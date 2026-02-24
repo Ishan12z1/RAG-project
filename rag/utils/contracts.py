@@ -67,6 +67,7 @@ class RetrievedChunk:
     text:str
     citation :Citation
     metadata:Dict[str,Any]
+    rank:Optional[int]=None
 
 ## Prompt
 @dataclass(frozen=True)
@@ -76,3 +77,43 @@ class EvidenceItem:
     text:str
     score:float
     metadata:Dict[str,Any]
+
+## checking 
+@dataclass(frozen=True)
+class AbstainDecision:
+    abstain:bool
+    reasons:List[str]
+    signals:Dict[str,Any]
+
+@dataclass(frozen=True)
+class AbstainConfig:
+    # Score-based
+    min_top1: float = 0.35
+    min_gap: float = 0.05
+    gap_k: int = 5
+
+    # Lexical overlap
+    min_overlap: float = 0.18
+    max_context_chars: int = 20_000 
+
+
+@dataclass(frozen=True)
+class ParsedAnswer:
+    '''
+mode: str # "answer" or "abstain": tells whether the model produced a normal answer or an abstention. \n
+bullets: List[str]: the answer content split into bullets (empty if abstain).\n
+citations_by_bullet: List[List[str]]: for each bullet, the list of citation tags used (e.g., ["C1","C2"]).\n
+resolved_chunk_ids_by_bullet: List[List[str]]: same structure as above, but citation tags mapped to real chunk_ids (used for eval/logging).\n
+abstain_reason: Optional[str]: if abstained, the text after ABSTAIN:; otherwise None.\n
+needs: List[str]: if abstained, the clarifying items after NEED:; otherwise empty.\n
+raw_text: str: the exact raw model output (always stored for debugging).\n
+parse_warnings: List[str]: parser flags like missing citations, invalid tags, wrong bullet count, etc.\n
+    '''
+    mode:str
+    bullets:List[str]
+    citation_by_bullet:List[List[str]]
+    resolved_chunk_ids_by_bullet :List[List[str]]
+    abstain_reason:Optional[str]
+    needs:List[str]
+    raw_text:str
+    parse_warning:List[str]
