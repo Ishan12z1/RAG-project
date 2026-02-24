@@ -5,7 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from statistics import median
 from typing import List
-from rag.retrieval.retrieve import Retriever,RetrievedChunk
+from rag.retrieval.retrieve import Retriever
+from rag.utils.contracts import RetrievedChunk
 
 
 def read_jsonl(path: Path):

@@ -13,26 +13,10 @@ import json
 from rag.embedding.embedding_provider import ProviderSpec
 from rag.embedding.hf_embeddings import SentTransEmb
 from rag.utils.helper_functions import _l2_normalize, read_meta
-
+from rag.utils.contracts import Citation,RetrievedChunk
 
 REQUIRED_CITATION_KEYS = ("source", "title", "section", "chunk_id","doc_id","url")
 
-@dataclass(frozen=True)
-class Citation:
-    source:str
-    url:str
-    title: str
-    section: str
-    chunk_id : str
-    doc_id:str
-
-@dataclass(frozen=True)
-class RetrievedChunk:
-    chunk_id:str
-    score:float
-    text:str
-    citation :Citation
-    metadata:Dict[str,Any]
 
 
 def _load_chunk_ids(ids_path:Path)->List[str]:

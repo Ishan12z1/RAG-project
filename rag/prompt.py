@@ -3,17 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any,Dict,Sequence,Tuple, List
 from rag.retrieval.retrieve import RetrievedChunk, Citation
-
+from rag.utils.contracts import EvidenceItem
 
 CITATION_TAG_PREFIX = "C"  # [C1], [C2], ...
 
-@dataclass(frozen=True)
-class EvidenceItem:
-    citation_tag:str
-    citation:Any
-    text:str
-    score:float
-    metadata:Dict[str,Any]
+
 
 
 # we are converting each chunk into a Evidence item format 

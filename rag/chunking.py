@@ -11,54 +11,9 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 from rag.utils.run_utils import new_run_id, resolve_run_dir
 import pandas as pd
+from rag.utils.contracts import ChunkPolicy,RawDoc,ExtractedDoc,Span,ChunkRow
 
 
-@dataclass(frozen=True)
-class ChunkPolicy:
-    policy_version: str = "v1"
-    target_tokens: int = 550
-    overlap_tokens: int = 80
-    min_tokens: int = 100
-    max_tokens: int = 750
-
-@dataclass(frozen=True)
-class RawDoc:
-    path: Path
-    source: str          # relative path string
-    doc_id: str          # stable hash of file content
-
-
-@dataclass(frozen=True)
-class ExtractedDoc:
-    raw: RawDoc
-    title: str
-    normalized_text: str
-    url: Optional[str] = None
-    page_texts: Optional[List[str]] = None  # only set for PDFs
-
-@dataclass(frozen=True)
-class Span:
-    start: int
-    end: int
-    section_path: str
-    kind: str  # "heading", "para", "bullets", "table", "other"
-
-@dataclass(frozen=True)
-class ChunkRow:
-    chunk_id: str
-    doc_id: str
-    source: str
-    title: str
-    section_path: str
-    chunk_index: int
-    start_offset: int
-    end_offset: int
-    token_count: int
-    checksum: str
-    chunk_text: str
-    url: Optional[str] 
-    page_start: Optional[int] = None
-    page_end: Optional[int] = None
 
 
 def sha1_bytes(b: bytes) -> str:
