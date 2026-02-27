@@ -80,7 +80,7 @@ SYSTEM_GROUNDED_QA = (
     "   ABSTAIN: <one sentence>\n"
     "   NEED: <up to 3 clarifying items>\n"
     "4) Do not cite sources not in EVIDENCE.\n"
-    f"PromptVersion: {PROMPT_VERSION}\n"
+    # f"PromptVersion: {PROMPT_VERSION}\n"
 )
 
 USER_TEMPLATE = (
