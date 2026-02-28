@@ -79,12 +79,12 @@ def parse_model_output(
         return ParsedAnswer(
             mode="abstain",
             bullets=[],
-            citations_by_bullet=[],
+            citation_by_bullet=[],
             resolved_chunk_ids_by_bullet=[],
             abstain_reason=reason,
             needs=needs,
             raw_text=raw_text,
-            parse_warnings=[],
+            parse_warning=[],
         )
 
     bullets_raw = _extract_bullets(text)
@@ -92,12 +92,12 @@ def parse_model_output(
         return ParsedAnswer(
             mode="answer",
             bullets=[],
-            citations_by_bullet=[],
+            citation_by_bullet=[],
             resolved_chunk_ids_by_bullet=[],
             abstain_reason=None,
             needs=[],
             raw_text=raw_text,
-            parse_warnings=["no_bullets_found"],
+            parse_warning=["no_bullets_found"],
         )
 
     if not (min_bullets <= len(bullets_raw) <= max_bullets):
