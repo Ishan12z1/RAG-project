@@ -14,7 +14,7 @@ from rag.utils.paths import embeddings_dir
 from rag.utils.helper_functions import _l2_normalize
 from rag.embedding.embedding_provider import ProviderSpec
 from rag.embedding.hf_embeddings import SentTransEmb
-
+import argparse
 
 # we are insuring a clean string with length less than max_chars (important for memeory and speed)
 def _clean_text(s:str,max_chars:int)->str:
@@ -42,12 +42,13 @@ def _write_ids_jsonl(path:Path,chunk_ids:List[str])-> None:
         for cid in chunk_ids: 
             f.write(cid+"\n")
 
-def main(chunks_path:str="data//processed_chunks.parquet",cfg_path:str="configs//embeddings.yaml")->None:
+def main(chunks_path:str,cfg_path:str,out_dir:str)->None:
+    
     cfg:Dict[str,Any]=load_yaml(cfg_path)
     emb_hash=stable_hash_dict(cfg)
 
     
-    out_dir = embeddings_dir(cfg["storage"]["root_dir"], emb_hash)
+    out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     vectors_path = out_dir / "vectors.npy"
@@ -142,4 +143,11 @@ def main(chunks_path:str="data//processed_chunks.parquet",cfg_path:str="configs/
     print(f"OK: wrote {N} embeddings of dim {d} to {out_dir}")
 
 if __name__ == "__main__":
-    main()
+    p = argparse.ArgumentParser()
+    p.add_argument("--chunks_path",default="data//processed_chunks.parquet")
+    p.add_argument("--configure_path",default="configs//embeddings.yaml")
+    p.add_argument("--output_dir",default="data//embeddings")
+    
+    args=p.parse_args()
+
+    main(args.chunks_path,args.configure_path,args.output_dir)
