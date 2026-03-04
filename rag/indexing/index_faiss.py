@@ -76,22 +76,24 @@ def main()->None:
     ap=argparse.ArgumentParser()
     ap.add_argument("--index_cfg",default="configs/index.yaml")
     ap.add_argument("--embeddings_root",default="data/embeddings")
-    ap.add_argument("--emb_hash",default=None,help="If omitted, uses latest embeddings subdir.")
+    ap.add_argument("--out_dir",default="data/index/flat_ip")
+    # ap.add_argument("--emb_hash",default=None,help="If omitted, uses latest embeddings subdir.")
+    
     args=ap.parse_args()
 
     index_cfg=load_yaml(args.index_cfg)
 
     emb_root=Path(args.embeddings_root)
-    emb_dir=emb_root / args.emb_hash if args.emb_hash else latest_subdir(emb_root)
+    emb_dir=emb_root 
 
     vecs,chunk_ids,emb_meta=load_embeddings(emb_dir)
 
     # Bind index to the embeddings it was built from (prevents mixing runs)
     index_cfg_bound=dict(index_cfg)
-    index_cfg_bound["emb_hash"]=emb_meta["emb_hash"]
+    # index_cfg_bound["emb_hash"]=emb_meta["emb_hash"]
     index_hash=stable_hash_dict(index_cfg_bound)
 
-    out_dir=Path(index_cfg["storage"]["root_dir"])
+    out_dir=Path(args.out_dir)
     out_dir=out_dir/ index_hash
     out_dir.mkdir(parents=True,exist_ok=True)
 
@@ -124,7 +126,7 @@ def main()->None:
         "index_type": index_type,
         "metric": metric,
         "params": {},  # flat has no tunables
-        "emb_hash": emb_meta["emb_hash"],
+        # "emb_hash": emb_meta["emb_hash"],
         "embedding_model": emb_meta["model_name"],
         "dim": int(vecs.shape[1]),
         "num_vectors": int(vecs.shape[0]),
@@ -138,7 +140,7 @@ def main()->None:
 
     report = {
         "index_hash": index_hash,
-        "emb_hash": emb_meta["emb_hash"],
+        # "emb_hash": emb_meta["emb_hash"],
         "index_type": index_type,
         "num_vectors": int(vecs.shape[0]),
         "dim": int(vecs.shape[1]),
