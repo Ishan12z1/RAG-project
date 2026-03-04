@@ -8,3 +8,6 @@ torch
 sentence-transformers
 faiss-cpu
 pytest
+datasets
+beautifulsoup4
+pypdf 
