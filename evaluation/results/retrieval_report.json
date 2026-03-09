@@ -1,0 +1,19 @@
+{
+  "n_queries_evaluated": 20,
+  "n_queries_skipped": 10,
+  "recall@1": 0.7,
+  "recall@5": 1.0,
+  "recall@10": 1.0,
+  "mrr@10": 0.8333333333333333,
+  "retrieve_p50_ms": 21.68405000702478,
+  "retrieve_p95_ms": 27.292100014165044,
+  "params": {
+    "max_k": 10,
+    "ks": [
+      1,
+      5,
+      10
+    ],
+    "mrr_k": 10
+  }
+}

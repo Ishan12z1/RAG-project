@@ -1,0 +1,11 @@
+{
+  "index_hash": "b401572ca42d",
+  "emb_hash": "d7ae97f4c056",
+  "index_type": "flat_ip",
+  "num_vectors": 2419,
+  "dim": 384,
+  "build_seconds": 0.0058,
+  "approx_index_bytes": 3715584,
+  "index_path": "data/run_2/index/flat_ip/b401572ca42d/faiss.index",
+  "emb_dir": "data/run_2/embeddings"
+}

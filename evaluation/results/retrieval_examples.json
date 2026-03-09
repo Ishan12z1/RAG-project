@@ -1,0 +1,579 @@
+{
+  "generated_at": "2026-02-22T16:39:44.443224Z",
+  "index_dir": "artifacts/index",
+  "embeddings_dir": "artifacts/embeddings",
+  "chunks_path": "data/processed_chunks.parquet",
+  "notes": "Slice 3.3 retrieval traces. Scores are standardized to higher-is-better in Retriever.",
+  "examples": [
+    {
+      "query": "What is diabetes?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.867764949798584,
+          "chunk_id": "9a0480e055ad2887",
+          "doc_id": "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+          "title": "What Is Diabetes? - NIDDK",
+          "section": "What Is Diabetes? - NIDDK",
+          "source": "3a23328f22b6225c.md",
+          "text_preview": "# What Is Diabetes? - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/what-is-diabetes  # What Is Diabetes?  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Glucose is your body’s main source of energ…"
+        },
+        {
+          "rank": 2,
+          "score": 0.8578023314476013,
+          "chunk_id": "cdc7f31ab8458ce1",
+          "doc_id": "57ab10af48db60cf98ec6855500911e338d8d3cc",
+          "title": "Diabetes - NIDDK",
+          "section": "Diabetes - NIDDK",
+          "source": "46a27b8a65ff4369.md",
+          "text_preview": "# Diabetes - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes  # Diabetes  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Over time, having too much glucose in your blood can cause other health problems such a…"
+        },
+        {
+          "rank": 3,
+          "score": 0.8452658653259277,
+          "chunk_id": "0cb840e1ec50a273",
+          "doc_id": "e72d2584996150826f466b1105ed94dc17a5a0cb",
+          "title": "Diabetes Basics",
+          "section": "Diabetes Basics",
+          "source": "de4327ce303c3085.md",
+          "text_preview": "# Diabetes Basics  Source: https://www.cdc.gov/diabetes/about/index.html  ## Key points  - Diabetes is a chronic (long-lasting) health condition that affects how your body turns food into energy. - There are three main types of diabetes: type 1, type 2, and gestational diabetes…"
+        },
+        {
+          "rank": 4,
+          "score": 0.8446598052978516,
+          "chunk_id": "224ed7dad435c3e2",
+          "doc_id": "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+          "title": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "section": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "source": "58504ec290440bf5.md",
+          "text_preview": "# Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus  Source: https://medlineplus.gov/diabetes.html  ### Learn More  ### See, Play and Learn  ### Resources  ### For You  ## Summary  ### What is diabetes?  Diabetes, also known as diabetes mellitus, is a disease in which y…"
+        },
+        {
+          "rank": 5,
+          "score": 0.8430615067481995,
+          "chunk_id": "e6364ae6b168503a",
+          "doc_id": "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+          "title": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "section": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "source": "47338eda83363617.md",
+          "text_preview": "# Blood Glucose | Blood Sugar | Diabetes | MedlinePlus  Source: https://medlineplus.gov/bloodglucose.html  ### Basics  ### Learn More  ### See, Play and Learn  ### Research  ### Resources  ### For You  ## Summary  ### What is blood glucose?  Blood glucose, or blood sugar, is the…"
+        }
+      ]
+    },
+    {
+      "query": "What is the difference between type 1 and type 2 diabetes?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.8344552516937256,
+          "chunk_id": "9a0480e055ad2887",
+          "doc_id": "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+          "title": "What Is Diabetes? - NIDDK",
+          "section": "What Is Diabetes? - NIDDK",
+          "source": "3a23328f22b6225c.md",
+          "text_preview": "# What Is Diabetes? - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/what-is-diabetes  # What Is Diabetes?  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Glucose is your body’s main source of energ…"
+        },
+        {
+          "rank": 2,
+          "score": 0.8310352563858032,
+          "chunk_id": "4c7596d0d8493f8d",
+          "doc_id": "55a41c269d61533e31dd13a9a5ad6d239afe64c8",
+          "title": "Diabetes: Overview",
+          "section": "Diabetes: Overview / Diabetes: Overview / On this page / Types of diabetes",
+          "source": "aecdf5ff533edf5e.md",
+          "text_preview": "## ### Prediabetes   Prediabetes happens when blood glucose levels are elevated, but lower than if you have type 2 diabetes. If you've been diagnosed with prediabetes, then you have an increased chance of developing type 2 diabetes.  ## ### Type 1 diabetes   Type 1 diabetes happ…"
+        },
+        {
+          "rank": 3,
+          "score": 0.8262952566146851,
+          "chunk_id": "224ed7dad435c3e2",
+          "doc_id": "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+          "title": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "section": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "source": "58504ec290440bf5.md",
+          "text_preview": "# Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus  Source: https://medlineplus.gov/diabetes.html  ### Learn More  ### See, Play and Learn  ### Resources  ### For You  ## Summary  ### What is diabetes?  Diabetes, also known as diabetes mellitus, is a disease in which y…"
+        },
+        {
+          "rank": 4,
+          "score": 0.8224842548370361,
+          "chunk_id": "0cb840e1ec50a273",
+          "doc_id": "e72d2584996150826f466b1105ed94dc17a5a0cb",
+          "title": "Diabetes Basics",
+          "section": "Diabetes Basics",
+          "source": "de4327ce303c3085.md",
+          "text_preview": "# Diabetes Basics  Source: https://www.cdc.gov/diabetes/about/index.html  ## Key points  - Diabetes is a chronic (long-lasting) health condition that affects how your body turns food into energy. - There are three main types of diabetes: type 1, type 2, and gestational diabetes…"
+        },
+        {
+          "rank": 5,
+          "score": 0.8063931465148926,
+          "chunk_id": "c704821c3d06d771",
+          "doc_id": "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+          "title": "What Is Diabetes? - NIDDK",
+          "section": "What Is Diabetes? - NIDDK / What Is Diabetes? / What are the different types of diabetes? / Type 2 diabetes",
+          "source": "3a23328f22b6225c.md",
+          "text_preview": "You can help delay or prevent type 2 diabetes by knowing the risk factors and taking steps toward a healthier lifestyle, such as losing weight or preventing weight gain.  ### Gestational diabetes  Gestational diabetes is a type of diabetes that develops during pregnancy. Most of…"
+        }
+      ]
+    },
+    {
+      "query": "What is blood glucose (blood sugar)?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.8674103617668152,
+          "chunk_id": "e6364ae6b168503a",
+          "doc_id": "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+          "title": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "section": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "source": "47338eda83363617.md",
+          "text_preview": "# Blood Glucose | Blood Sugar | Diabetes | MedlinePlus  Source: https://medlineplus.gov/bloodglucose.html  ### Basics  ### Learn More  ### See, Play and Learn  ### Research  ### Resources  ### For You  ## Summary  ### What is blood glucose?  Blood glucose, or blood sugar, is the…"
+        },
+        {
+          "rank": 2,
+          "score": 0.8143038749694824,
+          "chunk_id": "1a9a052aa2788615",
+          "doc_id": "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+          "title": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "section": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus / Basics / Learn More / When and how should I check my blood glucose?",
+          "source": "47338eda83363617.md",
+          "text_preview": "The most common way to check your blood glucose level at home is with a blood glucose meter. A blood glucose meter measures the amount of glucose in a small sample of blood, usually from your fingertip.  Continuous glucose monitoring (CGM) is another way to check your glucose le…"
+        },
+        {
+          "rank": 3,
+          "score": 0.811127245426178,
+          "chunk_id": "535036b06c89b21f",
+          "doc_id": "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+          "title": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "section": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "source": "fb4b91870bc959e6.md",
+          "text_preview": "# Low Blood Glucose (Hypoglycemia) - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/preventing-problems/low-blood-glucose-hypoglycemia  # Low Blood Glucose (Hypoglycemia)  **On this page:**  - What is low blood glucose? - How common is low blood gl…"
+        },
+        {
+          "rank": 4,
+          "score": 0.8058626651763916,
+          "chunk_id": "9a0480e055ad2887",
+          "doc_id": "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+          "title": "What Is Diabetes? - NIDDK",
+          "section": "What Is Diabetes? - NIDDK",
+          "source": "3a23328f22b6225c.md",
+          "text_preview": "# What Is Diabetes? - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/what-is-diabetes  # What Is Diabetes?  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Glucose is your body’s main source of energ…"
+        },
+        {
+          "rank": 5,
+          "score": 0.7998400330543518,
+          "chunk_id": "58079dcbf8a99f31",
+          "doc_id": "026562a5a26293879b86489200df76cb411c913c",
+          "title": "Managing Diabetes - NIDDK",
+          "section": "Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / How can I check my blood glucose level at home?",
+          "source": "76382141d583e744.md",
+          "text_preview": "If you take insulin or other diabetes medicines, checking your blood glucose level at home may help you avoid high or low blood glucose levels. Even if you do not use insulin, checking your blood glucose level at home can help you manage your diabetes. The test results may help…"
+        }
+      ]
+    },
+    {
+      "query": "What is A1C and why is it important?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.7826036810874939,
+          "chunk_id": "e6364ae6b168503a",
+          "doc_id": "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+          "title": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "section": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "source": "47338eda83363617.md",
+          "text_preview": "# Blood Glucose | Blood Sugar | Diabetes | MedlinePlus  Source: https://medlineplus.gov/bloodglucose.html  ### Basics  ### Learn More  ### See, Play and Learn  ### Research  ### Resources  ### For You  ## Summary  ### What is blood glucose?  Blood glucose, or blood sugar, is the…"
+        },
+        {
+          "rank": 2,
+          "score": 0.7779735326766968,
+          "chunk_id": "5bf82f7ff6ad239c",
+          "doc_id": "026562a5a26293879b86489200df76cb411c913c",
+          "title": "Managing Diabetes - NIDDK",
+          "section": "Managing Diabetes - NIDDK",
+          "source": "76382141d583e744.md",
+          "text_preview": "# Managing Diabetes - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/managing-diabetes  # Managing Diabetes  **On this page:**  - What are the diabetes ABCs? - How can a healthy lifestyle help manage my diabetes? - What types of medicines should I…"
+        },
+        {
+          "rank": 3,
+          "score": 0.7700769901275635,
+          "chunk_id": "58079dcbf8a99f31",
+          "doc_id": "026562a5a26293879b86489200df76cb411c913c",
+          "title": "Managing Diabetes - NIDDK",
+          "section": "Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / How can I check my blood glucose level at home?",
+          "source": "76382141d583e744.md",
+          "text_preview": "If you take insulin or other diabetes medicines, checking your blood glucose level at home may help you avoid high or low blood glucose levels. Even if you do not use insulin, checking your blood glucose level at home can help you manage your diabetes. The test results may help…"
+        },
+        {
+          "rank": 4,
+          "score": 0.7625488042831421,
+          "chunk_id": "d7884a45b87d6916",
+          "doc_id": "026562a5a26293879b86489200df76cb411c913c",
+          "title": "Managing Diabetes - NIDDK",
+          "section": "Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / Devices to help manage diabetes",
+          "source": "76382141d583e744.md",
+          "text_preview": "For safety, you may sometimes need to compare your CGM glucose readings with results from a standard blood glucose meter. This could be needed if you doubt the accuracy of your CGM readings, if you are changing your insulin dose, or if your CGM gives a warning alert.  Some peopl…"
+        },
+        {
+          "rank": 5,
+          "score": 0.7582997679710388,
+          "chunk_id": "0cb840e1ec50a273",
+          "doc_id": "e72d2584996150826f466b1105ed94dc17a5a0cb",
+          "title": "Diabetes Basics",
+          "section": "Diabetes Basics",
+          "source": "de4327ce303c3085.md",
+          "text_preview": "# Diabetes Basics  Source: https://www.cdc.gov/diabetes/about/index.html  ## Key points  - Diabetes is a chronic (long-lasting) health condition that affects how your body turns food into energy. - There are three main types of diabetes: type 1, type 2, and gestational diabetes…"
+        }
+      ]
+    },
+    {
+      "query": "What is hypoglycemia?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.8285491466522217,
+          "chunk_id": "535036b06c89b21f",
+          "doc_id": "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+          "title": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "section": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "source": "fb4b91870bc959e6.md",
+          "text_preview": "# Low Blood Glucose (Hypoglycemia) - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/preventing-problems/low-blood-glucose-hypoglycemia  # Low Blood Glucose (Hypoglycemia)  **On this page:**  - What is low blood glucose? - How common is low blood gl…"
+        },
+        {
+          "rank": 2,
+          "score": 0.8249597549438477,
+          "chunk_id": "a9c75e7a5722ef02",
+          "doc_id": "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+          "title": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "section": "Low Blood Glucose (Hypoglycemia) - NIDDK / Low Blood Glucose (Hypoglycemia) / What is low blood glucose? / What are the complications of low blood glucose?",
+          "source": "fb4b91870bc959e6.md",
+          "text_preview": "8 - hypoglycemia unawareness, a condition in which you don’t notice any symptoms of low blood glucose until your blood glucose level has dropped very low  ## What causes low blood glucose in people with diabetes?  Low blood glucose levels can be a side effect of insulin or some…"
+        },
+        {
+          "rank": 3,
+          "score": 0.8226273059844971,
+          "chunk_id": "e6364ae6b168503a",
+          "doc_id": "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+          "title": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "section": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "source": "47338eda83363617.md",
+          "text_preview": "# Blood Glucose | Blood Sugar | Diabetes | MedlinePlus  Source: https://medlineplus.gov/bloodglucose.html  ### Basics  ### Learn More  ### See, Play and Learn  ### Research  ### Resources  ### For You  ## Summary  ### What is blood glucose?  Blood glucose, or blood sugar, is the…"
+        },
+        {
+          "rank": 4,
+          "score": 0.8145716190338135,
+          "chunk_id": "12a6b0289c15d8d0",
+          "doc_id": "026562a5a26293879b86489200df76cb411c913c",
+          "title": "Managing Diabetes - NIDDK",
+          "section": "Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / Low blood glucose",
+          "source": "76382141d583e744.md",
+          "text_preview": "When your blood glucose level is too low, it is called hypoglycemia. For most people with diabetes, the blood glucose level is too low when it is below 70 mg/dL.1,2 Talk with your primary care professional or health care team if you often have low blood glucose levels. Some peop…"
+        },
+        {
+          "rank": 5,
+          "score": 0.8125208616256714,
+          "chunk_id": "1a9a052aa2788615",
+          "doc_id": "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+          "title": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "section": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus / Basics / Learn More / When and how should I check my blood glucose?",
+          "source": "47338eda83363617.md",
+          "text_preview": "The most common way to check your blood glucose level at home is with a blood glucose meter. A blood glucose meter measures the amount of glucose in a small sample of blood, usually from your fingertip.  Continuous glucose monitoring (CGM) is another way to check your glucose le…"
+        }
+      ]
+    },
+    {
+      "query": "What are common symptoms of diabetes?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.8320670127868652,
+          "chunk_id": "0f91adf58982ad9b",
+          "doc_id": "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+          "title": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "section": "Low Blood Glucose (Hypoglycemia) - NIDDK / Low Blood Glucose (Hypoglycemia) / What is low blood glucose? / Who is more likely to develop low blood glucose?",
+          "source": "fb4b91870bc959e6.md",
+          "text_preview": "- have type 1 diabetes - take insulin or some other diabetes medicines - are age 65 or older 5 - had low blood glucose before - have other health problems, such as kidney disease, heart disease, or cognitive impairment  ## What are the symptoms of low blood glucose?  Symptoms of…"
+        },
+        {
+          "rank": 2,
+          "score": 0.8278914093971252,
+          "chunk_id": "a9fca6aa2c80683a",
+          "doc_id": "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+          "title": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "section": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus / Learn More / See, Play and Learn / What are the symptoms of diabetes?",
+          "source": "58504ec290440bf5.md",
+          "text_preview": "- Feeling very thirsty - Feeling very hungry - Urinating (peeing) more often, including at night - Fatigue - Blurry vision - Numbness or tingling in the feet or hands - Sores that do not heal - Losing weight without trying  But it's important to know that your symptoms may vary,…"
+        },
+        {
+          "rank": 3,
+          "score": 0.8171906471252441,
+          "chunk_id": "535036b06c89b21f",
+          "doc_id": "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+          "title": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "section": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "source": "fb4b91870bc959e6.md",
+          "text_preview": "# Low Blood Glucose (Hypoglycemia) - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/preventing-problems/low-blood-glucose-hypoglycemia  # Low Blood Glucose (Hypoglycemia)  **On this page:**  - What is low blood glucose? - How common is low blood gl…"
+        },
+        {
+          "rank": 4,
+          "score": 0.8076374530792236,
+          "chunk_id": "cdc7f31ab8458ce1",
+          "doc_id": "57ab10af48db60cf98ec6855500911e338d8d3cc",
+          "title": "Diabetes - NIDDK",
+          "section": "Diabetes - NIDDK",
+          "source": "46a27b8a65ff4369.md",
+          "text_preview": "# Diabetes - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes  # Diabetes  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Over time, having too much glucose in your blood can cause other health problems such a…"
+        },
+        {
+          "rank": 5,
+          "score": 0.8069940805435181,
+          "chunk_id": "0cb840e1ec50a273",
+          "doc_id": "e72d2584996150826f466b1105ed94dc17a5a0cb",
+          "title": "Diabetes Basics",
+          "section": "Diabetes Basics",
+          "source": "de4327ce303c3085.md",
+          "text_preview": "# Diabetes Basics  Source: https://www.cdc.gov/diabetes/about/index.html  ## Key points  - Diabetes is a chronic (long-lasting) health condition that affects how your body turns food into energy. - There are three main types of diabetes: type 1, type 2, and gestational diabetes…"
+        }
+      ]
+    },
+    {
+      "query": "How does insulin work in the body?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.7968930006027222,
+          "chunk_id": "0cb840e1ec50a273",
+          "doc_id": "e72d2584996150826f466b1105ed94dc17a5a0cb",
+          "title": "Diabetes Basics",
+          "section": "Diabetes Basics",
+          "source": "de4327ce303c3085.md",
+          "text_preview": "# Diabetes Basics  Source: https://www.cdc.gov/diabetes/about/index.html  ## Key points  - Diabetes is a chronic (long-lasting) health condition that affects how your body turns food into energy. - There are three main types of diabetes: type 1, type 2, and gestational diabetes…"
+        },
+        {
+          "rank": 2,
+          "score": 0.7922878265380859,
+          "chunk_id": "e6364ae6b168503a",
+          "doc_id": "28fb4bfaaac428d5017490fd5c78de3ffaace6f1",
+          "title": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "section": "Blood Glucose | Blood Sugar | Diabetes | MedlinePlus",
+          "source": "47338eda83363617.md",
+          "text_preview": "# Blood Glucose | Blood Sugar | Diabetes | MedlinePlus  Source: https://medlineplus.gov/bloodglucose.html  ### Basics  ### Learn More  ### See, Play and Learn  ### Research  ### Resources  ### For You  ## Summary  ### What is blood glucose?  Blood glucose, or blood sugar, is the…"
+        },
+        {
+          "rank": 3,
+          "score": 0.7869275808334351,
+          "chunk_id": "9a0480e055ad2887",
+          "doc_id": "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+          "title": "What Is Diabetes? - NIDDK",
+          "section": "What Is Diabetes? - NIDDK",
+          "source": "3a23328f22b6225c.md",
+          "text_preview": "# What Is Diabetes? - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/what-is-diabetes  # What Is Diabetes?  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Glucose is your body’s main source of energ…"
+        },
+        {
+          "rank": 4,
+          "score": 0.7855827808380127,
+          "chunk_id": "224ed7dad435c3e2",
+          "doc_id": "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+          "title": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "section": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "source": "58504ec290440bf5.md",
+          "text_preview": "# Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus  Source: https://medlineplus.gov/diabetes.html  ### Learn More  ### See, Play and Learn  ### Resources  ### For You  ## Summary  ### What is diabetes?  Diabetes, also known as diabetes mellitus, is a disease in which y…"
+        },
+        {
+          "rank": 5,
+          "score": 0.7752734422683716,
+          "chunk_id": "58079dcbf8a99f31",
+          "doc_id": "026562a5a26293879b86489200df76cb411c913c",
+          "title": "Managing Diabetes - NIDDK",
+          "section": "Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / How can I check my blood glucose level at home?",
+          "source": "76382141d583e744.md",
+          "text_preview": "If you take insulin or other diabetes medicines, checking your blood glucose level at home may help you avoid high or low blood glucose levels. Even if you do not use insulin, checking your blood glucose level at home can help you manage your diabetes. The test results may help…"
+        }
+      ]
+    },
+    {
+      "query": "What are complications of uncontrolled diabetes?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.7751851081848145,
+          "chunk_id": "cdc7f31ab8458ce1",
+          "doc_id": "57ab10af48db60cf98ec6855500911e338d8d3cc",
+          "title": "Diabetes - NIDDK",
+          "section": "Diabetes - NIDDK",
+          "source": "46a27b8a65ff4369.md",
+          "text_preview": "# Diabetes - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes  # Diabetes  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Over time, having too much glucose in your blood can cause other health problems such a…"
+        },
+        {
+          "rank": 2,
+          "score": 0.7726537585258484,
+          "chunk_id": "0f91adf58982ad9b",
+          "doc_id": "0ca95e90c94be59c72b8cd79c9bb009068c40de3",
+          "title": "Low Blood Glucose (Hypoglycemia) - NIDDK",
+          "section": "Low Blood Glucose (Hypoglycemia) - NIDDK / Low Blood Glucose (Hypoglycemia) / What is low blood glucose? / Who is more likely to develop low blood glucose?",
+          "source": "fb4b91870bc959e6.md",
+          "text_preview": "- have type 1 diabetes - take insulin or some other diabetes medicines - are age 65 or older 5 - had low blood glucose before - have other health problems, such as kidney disease, heart disease, or cognitive impairment  ## What are the symptoms of low blood glucose?  Symptoms of…"
+        },
+        {
+          "rank": 3,
+          "score": 0.7654296159744263,
+          "chunk_id": "c704821c3d06d771",
+          "doc_id": "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+          "title": "What Is Diabetes? - NIDDK",
+          "section": "What Is Diabetes? - NIDDK / What Is Diabetes? / What are the different types of diabetes? / Type 2 diabetes",
+          "source": "3a23328f22b6225c.md",
+          "text_preview": "You can help delay or prevent type 2 diabetes by knowing the risk factors and taking steps toward a healthier lifestyle, such as losing weight or preventing weight gain.  ### Gestational diabetes  Gestational diabetes is a type of diabetes that develops during pregnancy. Most of…"
+        },
+        {
+          "rank": 4,
+          "score": 0.7630612850189209,
+          "chunk_id": "c282ef6483693b52",
+          "doc_id": "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+          "title": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "section": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus / Learn More / See, Play and Learn / What causes diabetes?",
+          "source": "58504ec290440bf5.md",
+          "text_preview": "**type 1 diabetes**is caused by genes and factors in the environment that might trigger the disease. **Type 2 diabetes**is caused by several factors, including lifestyle factors and genes. The lifestyle factors include not being physically active and being overweight or having o…"
+        },
+        {
+          "rank": 5,
+          "score": 0.7625513076782227,
+          "chunk_id": "4c7596d0d8493f8d",
+          "doc_id": "55a41c269d61533e31dd13a9a5ad6d239afe64c8",
+          "title": "Diabetes: Overview",
+          "section": "Diabetes: Overview / Diabetes: Overview / On this page / Types of diabetes",
+          "source": "aecdf5ff533edf5e.md",
+          "text_preview": "## ### Prediabetes   Prediabetes happens when blood glucose levels are elevated, but lower than if you have type 2 diabetes. If you've been diagnosed with prediabetes, then you have an increased chance of developing type 2 diabetes.  ## ### Type 1 diabetes   Type 1 diabetes happ…"
+        }
+      ]
+    },
+    {
+      "query": "What is prediabetes?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.8312557935714722,
+          "chunk_id": "9a0480e055ad2887",
+          "doc_id": "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+          "title": "What Is Diabetes? - NIDDK",
+          "section": "What Is Diabetes? - NIDDK",
+          "source": "3a23328f22b6225c.md",
+          "text_preview": "# What Is Diabetes? - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes/overview/what-is-diabetes  # What Is Diabetes?  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Glucose is your body’s main source of energ…"
+        },
+        {
+          "rank": 2,
+          "score": 0.8305317163467407,
+          "chunk_id": "4c7596d0d8493f8d",
+          "doc_id": "55a41c269d61533e31dd13a9a5ad6d239afe64c8",
+          "title": "Diabetes: Overview",
+          "section": "Diabetes: Overview / Diabetes: Overview / On this page / Types of diabetes",
+          "source": "aecdf5ff533edf5e.md",
+          "text_preview": "## ### Prediabetes   Prediabetes happens when blood glucose levels are elevated, but lower than if you have type 2 diabetes. If you've been diagnosed with prediabetes, then you have an increased chance of developing type 2 diabetes.  ## ### Type 1 diabetes   Type 1 diabetes happ…"
+        },
+        {
+          "rank": 3,
+          "score": 0.8250218033790588,
+          "chunk_id": "cdc7f31ab8458ce1",
+          "doc_id": "57ab10af48db60cf98ec6855500911e338d8d3cc",
+          "title": "Diabetes - NIDDK",
+          "section": "Diabetes - NIDDK",
+          "source": "46a27b8a65ff4369.md",
+          "text_preview": "# Diabetes - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes  # Diabetes  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Over time, having too much glucose in your blood can cause other health problems such a…"
+        },
+        {
+          "rank": 4,
+          "score": 0.8184412717819214,
+          "chunk_id": "c704821c3d06d771",
+          "doc_id": "2fd3a0d2a3ae3404b40e7a88d0d3ca5d4b081312",
+          "title": "What Is Diabetes? - NIDDK",
+          "section": "What Is Diabetes? - NIDDK / What Is Diabetes? / What are the different types of diabetes? / Type 2 diabetes",
+          "source": "3a23328f22b6225c.md",
+          "text_preview": "You can help delay or prevent type 2 diabetes by knowing the risk factors and taking steps toward a healthier lifestyle, such as losing weight or preventing weight gain.  ### Gestational diabetes  Gestational diabetes is a type of diabetes that develops during pregnancy. Most of…"
+        },
+        {
+          "rank": 5,
+          "score": 0.8121099472045898,
+          "chunk_id": "224ed7dad435c3e2",
+          "doc_id": "ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed",
+          "title": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "section": "Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus",
+          "source": "58504ec290440bf5.md",
+          "text_preview": "# Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus  Source: https://medlineplus.gov/diabetes.html  ### Learn More  ### See, Play and Learn  ### Resources  ### For You  ## Summary  ### What is diabetes?  Diabetes, also known as diabetes mellitus, is a disease in which y…"
+        }
+      ]
+    },
+    {
+      "query": "What is diabetic ketoacidosis (DKA)?",
+      "top_k": 5,
+      "oversample": 2,
+      "results": [
+        {
+          "rank": 1,
+          "score": 0.8563082218170166,
+          "chunk_id": "cea61df1b64f77cd",
+          "doc_id": "28cd4c2c8cb92bc00ef8343e302c951328b13ef0",
+          "title": "Diabetic Ketoacidosis",
+          "section": "Diabetic Ketoacidosis",
+          "source": "89bc983457840fd6.md",
+          "text_preview": "# Diabetic Ketoacidosis  Source: https://www.cdc.gov/diabetes/about/diabetic-ketoacidosis.html  ## Key points  - Diabetic ketoacidosis (DKA) develops when your body doesn’t have enough insulin to allow blood sugar into your cells for use as energy. - DKA is most common among peo…"
+        },
+        {
+          "rank": 2,
+          "score": 0.7945259809494019,
+          "chunk_id": "e861dff58d579f03",
+          "doc_id": "28cd4c2c8cb92bc00ef8343e302c951328b13ef0",
+          "title": "Diabetic Ketoacidosis",
+          "section": "Diabetic Ketoacidosis / Key points / Overview / Prevention",
+          "source": "89bc983457840fd6.md",
+          "text_preview": "DKA is a serious condition, but you can take steps to help prevent it:  - Check your blood sugar often, especially if you're sick. - Keep your blood sugar levels in your target range as much as possible. - Take medicines as prescribed, even if you feel fine. - Talk to your docto…"
+        },
+        {
+          "rank": 3,
+          "score": 0.7833105325698853,
+          "chunk_id": "b2e94f5814691bcc",
+          "doc_id": "026562a5a26293879b86489200df76cb411c913c",
+          "title": "Managing Diabetes - NIDDK",
+          "section": "Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / Checking urine for ketones",
+          "source": "76382141d583e744.md",
+          "text_preview": "Your health care team may want you to check your urine for ketones if you have symptoms of diabetic ketoacidosis. Diabetic ketoacidosis is a medical emergency that needs to be treated right away.  Symptoms of diabetic ketoacidosis include  - feeling very tired - having trouble b…"
+        },
+        {
+          "rank": 4,
+          "score": 0.7630729675292969,
+          "chunk_id": "cdc7f31ab8458ce1",
+          "doc_id": "57ab10af48db60cf98ec6855500911e338d8d3cc",
+          "title": "Diabetes - NIDDK",
+          "section": "Diabetes - NIDDK",
+          "source": "46a27b8a65ff4369.md",
+          "text_preview": "# Diabetes - NIDDK  Source: https://www.niddk.nih.gov/health-information/diabetes  # Diabetes  Diabetes is a disease that occurs when your blood glucose, also called blood sugar, is too high. Over time, having too much glucose in your blood can cause other health problems such a…"
+        },
+        {
+          "rank": 5,
+          "score": 0.7596213817596436,
+          "chunk_id": "12a6b0289c15d8d0",
+          "doc_id": "026562a5a26293879b86489200df76cb411c913c",
+          "title": "Managing Diabetes - NIDDK",
+          "section": "Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / Low blood glucose",
+          "source": "76382141d583e744.md",
+          "text_preview": "When your blood glucose level is too low, it is called hypoglycemia. For most people with diabetes, the blood glucose level is too low when it is below 70 mg/dL.1,2 Talk with your primary care professional or health care team if you often have low blood glucose levels. Some peop…"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,251 @@
+==========================================================================================
+chunk_id: 8fee66f394df3de8  doc_id: 026562a5a26293879b86489200df76cb411c913c
+source: 76382141d583e744.md
+title: Managing Diabetes - NIDDK
+section_path: Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / What clinical trials for managing diabetes are looking for participants?
+token_count: 507  offsets: [15468, 18149)
+------------------------------------------------------------------------------------------
+You can view a filtered list of clinical studies on managing diabetes that are federally funded, open, and recruiting at ClinicalTrials.gov. You can expand or narrow the list to include clinical studies from industry, universities, and individuals; however, the National Institutes of Health does not review these studies and cannot ensure they are safe for you. Always talk with your primary health care professional before you participate in a clinical study.
+
+## What have we learned about managing diabetes from NIDDK-funded research?
+
+The research funded by NIDDK has improved quality of life for people with diabetes by finding better ways to diagnose and treat the disease.
+
+### Artificial pancreas
+
+For decades, NIDDK has supported research that helped create artificial pancreas technology used by some people who need insulin to manage their diabetes.
+
+NIDDK supported research that helped 
+...[truncated]...
+
+==========================================================================================
+chunk_id: 18f9b265a7a631ce  doc_id: ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed
+source: 58504ec290440bf5.md
+title: Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus
+section_path: Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus / Learn More / See, Play and Learn / Statistics and Research
+token_count: 389  offsets: [10127, 12093)
+------------------------------------------------------------------------------------------
+- Diabetes in America (National Institute of Diabetes and Digestive and Kidney Diseases)
+- Diabetes Interactive Atlas (Centers for Disease Control and Prevention)
+- FastStats: Diabetes (National Center for Health Statistics)
+- National Diabetes Statistics Report (Centers for Disease Control and Prevention)
+
+## Clinical Trials
+
+- ClinicalTrials.gov: Diabetes Mellitus (National Institutes of Health)
+
+## Journal Articles References and abstracts from MEDLINE/PubMed (National Library of Medicine)
+
+- Article: Feasibility of glycated haemoglobin target-setting in adults with diabetes: A mixed-methods...
+- Article: The effect of educational intervention on the lifestyle changes of elderly...
+- Article: Australasian periprocedural guideline for children and adolescents with diabetes mellitus.
+- Diabetes -- see more articles
+
+## Reference Desk
+
+- Common Terms (American Diabetes Association)
+
+## F
+...[truncated]...
+
+==========================================================================================
+chunk_id: c282ef6483693b52  doc_id: ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed
+source: 58504ec290440bf5.md
+title: Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus
+section_path: Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus / Learn More / See, Play and Learn / What causes diabetes?
+token_count: 491  offsets: [1736, 3965)
+------------------------------------------------------------------------------------------
+**type 1 diabetes**is caused by genes and factors in the environment that might trigger the disease. **Type 2 diabetes**is caused by several factors, including lifestyle factors and genes. The lifestyle factors include not being physically active and being overweight or having obesity.- Researchers think
+**gestational diabetes**is caused by the hormonal changes of pregnancy along with genetic and lifestyle factors.
+
+### Who is more likely to develop diabetes?
+
+The different types of diabetes have different risk factors:
+
+- You can develop
+**type 1 diabetes**at any age, but it most often starts in childhood. Having a parent or sibling with type 1 diabetes may increase your chance of developing it. - You are at higher risk of developing
+**type 2 diabetes**if you: - Are overweight or have obesity.
+- Are over age 35. Children, teenagers, and younger adults can get diabetes, but it is more co
+...[truncated]...
+
+==========================================================================================
+chunk_id: 339201761890975c  doc_id: 026562a5a26293879b86489200df76cb411c913c
+source: 76382141d583e744.md
+title: Managing Diabetes - NIDDK
+section_path: Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / Blood glucose management studies
+token_count: 416  offsets: [16973, 19075)
+------------------------------------------------------------------------------------------
+NIDDK funded the landmark Diabetes Control and Complications Trial (DCCT). The study showed that participants with type 1 diabetes who kept their blood glucose levels close to normal greatly lowered their chances of developing eye, kidney, and nerve disease. A follow-up study, the ongoing Epidemiology of Diabetes Interventions and Complications (EDIC) study, has continued to follow DCCT participants since 1994. EDIC has shown that there are long-term benefits of early and intensive blood glucose management on slowing or preventing the development of health problems such as heart, eye, kidney, and nerve diseases. Findings from the DCCT and EDIC studies changed the way diabetes is treated worldwide, and they show that blood glucose control can help people with diabetes lead longer and healthier lives.
+
+NIDDK also funded the Diabetes & Aging Study to research the effects of early blood gluc
+...[truncated]...
+
+==========================================================================================
+chunk_id: 1a9a052aa2788615  doc_id: 28fb4bfaaac428d5017490fd5c78de3ffaace6f1
+source: 47338eda83363617.md
+title: Blood Glucose | Blood Sugar | Diabetes | MedlinePlus
+section_path: Blood Glucose | Blood Sugar | Diabetes | MedlinePlus / Basics / Learn More / When and how should I check my blood glucose?
+token_count: 521  offsets: [1908, 4403)
+------------------------------------------------------------------------------------------
+The most common way to check your blood glucose level at home is with a blood glucose meter. A blood glucose meter measures the amount of glucose in a small sample of blood, usually from your fingertip.
+
+Continuous glucose monitoring (CGM) is another way to check your glucose levels. Most CGM systems use a tiny sensor that is inserted under your skin. The sensor measures your glucose level every few minutes. It can show changes in your glucose level throughout the day and night. A CGM system is especially useful for people who take insulin and have problems with low blood glucose.
+
+Your provider will also check your blood glucose with a blood test called an A1C. It checks your average blood glucose level over the past three months. People with diabetes usually have an A1C test at least twice a year. But you may need the test more often if you aren't meeting your diabetes treatment goals.
+...[truncated]...
+
+==========================================================================================
+chunk_id: 44be9e7639ca0129  doc_id: 0ca95e90c94be59c72b8cd79c9bb009068c40de3
+source: fb4b91870bc959e6.md
+title: Low Blood Glucose (Hypoglycemia) - NIDDK
+section_path: Low Blood Glucose (Hypoglycemia) - NIDDK / Low Blood Glucose (Hypoglycemia) / What is low blood glucose? / What if I have severe low blood glucose and can’t treat myself?
+token_count: 532  offsets: [9506, 12258)
+------------------------------------------------------------------------------------------
+- talking with your doctor or health care team about when and how to use a glucagon emergency kit. If you have an emergency kit, regularly check the date on the package to make sure it hasn’t expired.
+- teaching your family, friends, and coworkers when and how to give you glucagon. Tell them to call 911 right away after giving you glucagon or if you don’t have a glucagon emergency kit with you.
+- wearing a medical alert identification bracelet or pendant. A medical alert ID tells other people that you have diabetes and need care right away. Getting prompt care can help prevent the serious problems that low blood glucose levels can cause.
+
+## Clinical Trials for Low Blood Glucose
+
+The NIDDK conducts and supports clinical trials in many diseases and conditions, including diabetes. The trials look to find new ways to prevent, detect, or treat disease and improve quality of life.
+
+### What a
+...[truncated]...
+
+==========================================================================================
+chunk_id: 58079dcbf8a99f31  doc_id: 026562a5a26293879b86489200df76cb411c913c
+source: 76382141d583e744.md
+title: Managing Diabetes - NIDDK
+section_path: Managing Diabetes - NIDDK / Managing Diabetes / What are the diabetes ABCs? / How can I check my blood glucose level at home?
+token_count: 462  offsets: [5994, 8254)
+------------------------------------------------------------------------------------------
+If you take insulin or other diabetes medicines, checking your blood glucose level at home may help you avoid high or low blood glucose levels. Even if you do not use insulin, checking your blood glucose level at home can help you manage your diabetes. The test results may help you and your health care team make changes to your meal plan, physical activity level, or diabetes medicines. It may help you understand how certain types of food affect your blood glucose level. You do not get the same level of detail from blood tests—such as the A1C test—that you take at a health care professional’s office.
+
+If you have type 1 diabetes, your health care team may ask you to check your urine at home for substances called ketones. A large amount of ketones in your urine may mean that you need to manage your diabetes more carefully. Work with your primary health care professional—who may be a doctor
+...[truncated]...
+
+==========================================================================================
+chunk_id: d89cad625da4ce33  doc_id: 0ca95e90c94be59c72b8cd79c9bb009068c40de3
+source: fb4b91870bc959e6.md
+title: Low Blood Glucose (Hypoglycemia) - NIDDK
+section_path: Low Blood Glucose (Hypoglycemia) - NIDDK / Low Blood Glucose (Hypoglycemia) / What is low blood glucose? / How do I treat low blood glucose?
+token_count: 546  offsets: [7633, 10194)
+------------------------------------------------------------------------------------------
+- Eat or drink 15 to 20 grams of glucose or carbohydrates right away. Examples include
+- four glucose tablets or one tube of glucose gel.
+- 1/2 cup (4 ounces) of fruit juice—not low-calorie or reduced-sugar juice. If you have kidney disease, don’t drink orange juice because it has a lot of potassium. Apple, grape, or cranberry juice are good options.
+- 1/2 can (4 to 6 ounces) of soda—not low-calorie or reduced-sugar soda.
+- 1 tablespoon of sugar, honey, or corn syrup.
+
+- Wait 15 minutes and check your blood glucose level again. If your glucose level is still low, eat or drink another 15 to 20 grams of glucose or carbohydrates.
+- Check your blood glucose level again after another 15 minutes. Repeat these steps until your glucose level is back to your target range.
+- If your next meal is more than 1 hour away, have a snack to keep your blood glucose level within a range that is healthy for
+...[truncated]...
+
+==========================================================================================
+chunk_id: 4c7596d0d8493f8d  doc_id: 55a41c269d61533e31dd13a9a5ad6d239afe64c8
+source: aecdf5ff533edf5e.md
+title: Diabetes: Overview
+section_path: Diabetes: Overview / Diabetes: Overview / On this page / Types of diabetes
+token_count: 370  offsets: [2319, 4083)
+------------------------------------------------------------------------------------------
+##
+### Prediabetes
+
+
+Prediabetes happens when blood glucose levels are elevated, but lower than if you have type 2 diabetes. If you've been diagnosed with prediabetes, then you have an increased chance of developing type 2 diabetes.
+
+##
+### Type 1 diabetes
+
+
+Type 1 diabetes happens when the immune system destroys your pancreas' beta cells. This causes them to stop producing insulin.
+
+Type 1 diabetes usually develops in childhood or early adulthood, and there is no known way to prevent it. Known risk factors include genetic predisposition and certain environmental factors. About 5 to 10% of people living with diabetes have type 1.
+
+##
+### Type 2 diabetes
+
+
+Type 2 diabetes happens when the body either:
+
+- doesn't make enough insulin
+**or** - doesn't respond well to the insulin it makes
+
+Type 2 diabetes is the most common type. About 90 to 95% of people living with diabetes have type 2. Peo
+...[truncated]...
+
+==========================================================================================
+chunk_id: 3c8fbdc71541f8c4  doc_id: 28fb4bfaaac428d5017490fd5c78de3ffaace6f1
+source: 47338eda83363617.md
+title: Blood Glucose | Blood Sugar | Diabetes | MedlinePlus
+section_path: Blood Glucose | Blood Sugar | Diabetes | MedlinePlus / Basics / Learn More / Genetics
+token_count: 485  offsets: [5965, 8192)
+------------------------------------------------------------------------------------------
+- Donohue syndrome: MedlinePlus Genetics (National Library of Medicine)
+- Maturity-onset diabetes of the young: MedlinePlus Genetics (National Library of Medicine)
+- Type A insulin resistance syndrome: MedlinePlus Genetics (National Library of Medicine)
+
+## Test Your Knowledge
+
+- Managing Type 2 Diabetes Quiz (Medical Encyclopedia) Also in Spanish
+
+## Clinical Trials
+
+- ClinicalTrials.gov: Blood Glucose (National Institutes of Health)
+- ClinicalTrials.gov: Continuous Glucose Monitoring (National Institutes of Health)
+
+## Journal Articles References and abstracts from MEDLINE/PubMed (National Library of Medicine)
+
+- Article: The Impact of a Fat-Dominant Preload Before a Carbohydrate-Rich Meal on...
+- Article: Mother and child health 4.5 years after gestational diabetes mellitus managed...
+- Article: Low-Versus High-Carbohydrate Isocaloric Diets on Continuous Glucose Monitoring Metrics in 
+...[truncated]...
+
+==========================================================================================
+chunk_id: cea61df1b64f77cd  doc_id: 28cd4c2c8cb92bc00ef8343e302c951328b13ef0
+source: 89bc983457840fd6.md
+title: Diabetic Ketoacidosis
+section_path: Diabetic Ketoacidosis
+token_count: 549  offsets: [0, 2350)
+------------------------------------------------------------------------------------------
+# Diabetic Ketoacidosis
+
+Source: https://www.cdc.gov/diabetes/about/diabetic-ketoacidosis.html
+
+## Key points
+
+- Diabetic ketoacidosis (DKA) develops when your body doesn’t have enough insulin to allow blood sugar into your cells for use as energy.
+- DKA is most common among people with type 1 diabetes.
+- DKA is serious and can be life-threatening.
+
+## Overview
+
+DKA is a serious complication of diabetes that can be life-threatening. DKA is most common among people with type 1 diabetes. People with type 2 diabetes can also develop DKA.
+
+DKA develops when your body doesn't have enough insulin to allow blood sugar into your cells for use as energy. Instead, your liver breaks down fat for fuel, a process that produces acids called ketones. When too many ketones are produced too fast, they can build up to dangerous levels in your body.
+
+Read on to learn more about DKA, how you can prevent DKA
+...[truncated]...
+
+==========================================================================================
+chunk_id: dada353759b1d52d  doc_id: ccbc7bdfaa8bf76d83866e29a1cbb1883fe99fed
+source: 58504ec290440bf5.md
+title: Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus
+section_path: Diabetes | Type 1 Diabetes | Type 2 Diabetes | MedlinePlus / Learn More / See, Play and Learn / Related Issues
+token_count: 490  offsets: [8247, 10625)
+------------------------------------------------------------------------------------------
+- A1C Test and Race/Ethnicity (National Institute of Diabetes and Digestive and Kidney Diseases)
+- Chronic Kidney Disease, Diabetes, and Heart Disease (Centers for Disease Control and Prevention)
+- Health Consequences of Early Exposure to Sugar Also in Spanish
+- Healthy Living with Diabetes (National Institute of Diabetes and Digestive and Kidney Diseases) Also in Spanish
+- People at Higher Risk of Flu Complications (Centers for Disease Control and Prevention)
+- Prediabetes:MedlinePlus Health Topic (National Library of Medicine) Also in Spanish
+- Symptoms and Causes of Diabetes (National Institute of Diabetes and Digestive and Kidney Diseases) Also in Spanish
+- Vaccinations for Adults with Diabetes (Immunization Action Coalition) - PDF
+
+## Genetics
+
+- 17q12 deletion syndrome: MedlinePlus Genetics (National Library of Medicine)
+- 6q24-related transient neonatal diabetes mellitus: MedlineP
+...[truncated]...
