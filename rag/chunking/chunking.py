@@ -603,8 +603,10 @@ def process_one_doc(
 ) -> List[ChunkRow]:
     raw_text, page_texts = extract_text_dispatch(doc)
     normalized = normalize_text(raw_text)
+    metadata = metadata or {}
+
     title= metadata.get("title") or guess_title(doc.source, normalized)
-    url = metadata.get("url") or  extract_source_url(normalize_text)
+    url = metadata.get("url") or  extract_source_url(normalized)
     spans = build_spans(normalized)
     spans = expand_spans(normalized, spans, policy, tc)
 
