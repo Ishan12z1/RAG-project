@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from typing import Iterable, Tuple
+from typing import  Tuple
 from rag.retrieval.bm25_index import BM25Index, BM25Config
 import pandas as pd
 
