@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Any,Dict,List,Optional
+from typing import Any,Dict,List,Optional, Set
 from pathlib import Path
 ##Chunking 
 @dataclass(frozen=True)
@@ -117,3 +117,32 @@ parse_warnings: List[str]: parser flags like missing citations, invalid tags, wr
     needs:List[str]
     raw_text:str
     parse_warning:List[str]
+
+
+### Eval Contracts 
+@dataclass(frozen=True)
+class RetrievalExample:
+    qid:str
+    query:str
+    golden_chunk_ids:Set[str]
+    golden_doc_ids:Optional[Set[str]]=None
+    meta:Optional[Dict[str,Any]]=None
+
+@dataclass
+class RetrievalMetrics:
+    recall_at_k: Dict[int, float]
+    mrr_at_k: Dict[int, float]
+    hit_rate_at_k: Dict[int, float]
+    p50_ms: float
+    p95_ms: float
+    mean_ms: float
+    n_queries: int
+
+@dataclass
+class PerQueryResult:
+    qid: str
+    query: str
+    gold_chunk_ids: List[str]
+    retrieved_chunk_ids: List[str]
+    first_hit_rank: Optional[int]
+    latency_ms: float
