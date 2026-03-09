@@ -11,3 +11,5 @@ pytest
 datasets
 beautifulsoup4
 pypdf 
+nltk
+scikit-learn
