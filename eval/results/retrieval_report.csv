@@ -1,2 +1,0 @@
-n_queries,recall@1,recall@5,recall@10,mrr@10,retrieve_p50_ms,retrieve_p95_ms
-,0.7,1.0,1.0,0.8333333333333333,21.68405000702478,27.292100014165044

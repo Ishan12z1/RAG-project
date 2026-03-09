@@ -1,9 +1,0 @@
-{
-  "total_docs": 11,
-  "total_chunks": 41,
-  "token_count_min": 226,
-  "token_count_median": 515,
-  "token_count_p95": 549,
-  "token_count_max": 550,
-  "duplicate_chunks_exact": 0
-}

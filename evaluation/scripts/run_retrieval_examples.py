@@ -1,21 +1,3 @@
-# eval/run_retrieval_examples.py
-#
-# Slice 3.3: Generate eval/results/retrieval_examples.json
-#
-# What it does:
-# - Runs your Retriever on a small set of queries
-# - Saves top-k results with score + citation fields + short text preview
-#
-# Run:
-#   python -m eval.run_retrieval_examples
-# or:
-#   python eval/run_retrieval_examples.py
-#
-# Optional env vars:
-#   RAG_INDEX_DIR, RAG_EMB_DIR, RAG_CHUNKS_PATH
-#   RAG_TOP_K, RAG_OVERSAMPLE
-#   RAG_EXAMPLES_OUT (default: eval/results/retrieval_examples.json)
-
 from __future__ import annotations
 
 import json

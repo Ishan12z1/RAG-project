@@ -48,7 +48,7 @@ def compute_metrics(per_query,ks=(1,5,10),mrr_k=10):
 
     for r in eval_rows:
         retrieved=r["retrieved_chunk_ids"]
-        relevant = set(r["relevant_chunk_ids"])  # FIXED
+        relevant = set(r["relevant_chunk_ids"]) 
 
         # Recall@K
         for k in ks:
