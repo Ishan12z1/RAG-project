@@ -6,7 +6,25 @@ from rag.retrieval import Retriever,BM25Index, bm25_builder, bm25_index, ChunkSt
 def load_queries(path: str) -> List[Dict]:
     with open(path, "r", encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
+def rrf_score(
+    cid: str,
+    dense_rank: Dict[str, int],
+    bm25_rank: Dict[str, int],
+    hybrid_rank: Dict[str, int],
+    k: int = 60,
+) -> float:
+    score = 0.0
 
+    if cid in dense_rank:
+        score += 1.0 / (k + dense_rank[cid])
+
+    if cid in bm25_rank:
+        score += 1.0 / (k + bm25_rank[cid])
+
+    if cid in hybrid_rank:
+        score += 1.0 / (k + hybrid_rank[cid])
+
+    return score
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--queries", default="eval/data/queries.jsonl")
@@ -46,29 +64,26 @@ def main():
             # Dense candidates
             dense_hits = dense.retrieve(query=query, top_k=args.dense_k)
             dense_map = {c.chunk_id: float(c.score) for c in dense_hits}
-
+            dense_rank = {c.chunk_id: i + 1 for i, c in enumerate(dense_hits)}
             # BM25 candidates
             bm25_hits = bm25.search(query, top_k=args.bm25_k)
             bm25_map = {cid: float(sc) for cid, sc in bm25_hits}
+            bm25_rank = {cid: i + 1 for i, (cid, _) in enumerate(bm25_hits)}
 
             # Optional hybrid candidates (often redundant but can add a few)
             hybrid_map = {}
             if hybrid is not None:
                 hy_hits = hybrid.retrieve(query=query, top_k=args.hybrid_k)
                 hybrid_map = {c.chunk_id: float(c.score) for c in hy_hits}
-
+                hybrid_rank = {c.chunk_id: i + 1 for i, c in enumerate(hy_hits)} if hybrid is not None else {}
             # Union pool ids
             pool_ids = list(set(dense_map) | set(bm25_map) | set(hybrid_map))
 
-            # If pool too large, keep a cap by a simple heuristic:
-            # rank by max(normalized-ish proxy): max of available scores (not true normalization)
-            # This is just to keep review size bounded.
-            def proxy(cid: str) -> float:
-                return max(dense_map.get(cid, float("-inf")),
-                           bm25_map.get(cid, float("-inf")),
-                           hybrid_map.get(cid, float("-inf")))
 
-            pool_ids.sort(key=proxy, reverse=True)
+            pool_ids.sort(
+                     key=lambda cid: rrf_score(cid, dense_rank, bm25_rank, hybrid_rank),
+                    reverse=True,
+                )
             pool_ids = pool_ids[: args.max_pool]
 
             # Hydrate pool with text so reranker & labeling can work
