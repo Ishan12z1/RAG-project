@@ -1,3 +1,5 @@
 chunking_loc: "data//run_2//processed_chunks.parquet"
 embedding_loc: "data//run_2//embeddings"
 indexing_loc:  "data//run_2//index//flat_ip//b401572ca42d"
+bm25_path: "artifacts//bm25//bm25.json"
+chunk_store_path: "data//run_2//processed_chunks.parquet"
