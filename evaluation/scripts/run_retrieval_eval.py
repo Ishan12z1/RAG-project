@@ -26,3 +26,4 @@ def run(retriever, golden_path: str, *, run_tag: str, notes: str = ""):
         },
         notes=notes,
     )
+    return metrics
