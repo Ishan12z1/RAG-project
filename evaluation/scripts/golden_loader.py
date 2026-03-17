@@ -10,6 +10,9 @@ def load_golden_set(path: str) -> List[RetrievalExample]:
 
     examples: List[RetrievalExample] = []
     for item in data:
+        bucket = item.get("bucket", "answerable")
+        if bucket != "answerable":
+            continue
         qid = str(item["qid"])
         query = str(item["query"])
 
@@ -25,14 +28,13 @@ def load_golden_set(path: str) -> List[RetrievalExample]:
 
         if not gold:
             continue
-
         examples.append(
-            RetrievalExample(
-                qid=qid,
-                query=query,
-                gold_chunk_ids=gold,
-                meta={"bucket": item.get("bucket"), "best_chunk_id": str(best) if best else None},
-            )
-        )
+        RetrievalExample(
+            qid=qid,
+            query=query,
+            gold_chunk_ids=gold,
+            meta={"bucket": item.get("bucket"), "best_chunk_id": str(best) if best else None},
+        ))
+        
 
     return examples
