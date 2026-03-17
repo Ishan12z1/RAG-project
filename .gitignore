@@ -7,3 +7,5 @@ data/
 notes.txt
 temp.py
 temp/
+.env
+Remote_LLM_Setup.ipynb
