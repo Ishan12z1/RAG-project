@@ -1,20 +1,5 @@
 # eval/generate_retrieval_snapshot.py
-#
-# Slice 3.4 (part 1): Generate a retrieval snapshot JSON (golden file)
-# - Runs retrieval for a fixed set of queries
-# - Stores the expected top-5 chunk_ids (and optionally doc_ids) per query
-#
-# Run ONCE whenever you intentionally change retrieval behavior:
-#   python eval/generate_retrieval_snapshot.py
-#
-# Output:
-#   tests/retrieval_snapshot.json
-#
-# Optional env vars:
-#   RAG_INDEX_DIR, RAG_EMB_DIR, RAG_CHUNKS_PATH
-#   RAG_SNAPSHOT_TOP_K (default 5)
-#   RAG_SNAPSHOT_OVERSAMPLE (default 10)
-#   RAG_SNAPSHOT_OUT (default tests/retrieval_snapshot.json)
+
 
 from __future__ import annotations
 
