@@ -22,7 +22,7 @@ class RetrievalEvaluator:
             raise ValueError("ks is empty")
         
         self.examples=examples
-        self.ks=ks
+        self.ks=sorted(set(ks))
         self.name=name
     
     def evaluate(self,
@@ -49,9 +49,8 @@ class RetrievalEvaluator:
             t1=time.perf_counter()
             latency_ms = (t1 - t0) * 1000.0
 
-            retrieved = sorted(retrieved, key=lambda x: float(getattr(x, "score", 0.0)), reverse=True)
-
-            retrieved_ids=[r.chunk_id for r in retrieved]
+            retrieved = sorted(retrieved, key=lambda x: float(getattr(x, "score", 0.0)), reverse=True)[:max_k]
+            retrieved_ids = [r.chunk_id for r in retrieved]
 
             if strict_unique_ids:
                 if len(retrieved_ids) != len(set(retrieved_ids)):
