@@ -61,7 +61,6 @@ class HybridRetriever:
         out=[]
         for rank_idx, (cid,score) in enumerate(ranked_ids,start=1):
             ch=dense_by_id.get(cid)
-            print("ch",ch)
             if ch is None:
                 ch= self.chunk_store.get(cid)
             
