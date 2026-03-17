@@ -124,7 +124,7 @@ parse_warnings: List[str]: parser flags like missing citations, invalid tags, wr
 class RetrievalExample:
     qid:str
     query:str
-    golden_chunk_ids:Set[str]
+    gold_chunk_ids:Set[str]
     golden_doc_ids:Optional[Set[str]]=None
     meta:Optional[Dict[str,Any]]=None
 
