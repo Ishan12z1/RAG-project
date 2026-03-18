@@ -38,7 +38,7 @@ def main():
                 max_text_chars=2000,
                 normalize_scores=False,
                 device="cuda" if torch.cuda.is_available() else "cpu",
-                url="https://1b56-34-16-191-69.ngrok-free.app"
+                url="https://b233-34-125-221-96.ngrok-free.app"
             
         )
     )
