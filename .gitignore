@@ -9,3 +9,5 @@ temp.py
 temp/
 .env
 Remote_LLM_Setup.ipynb
+.vscode/
+.pytest_cache/
