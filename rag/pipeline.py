@@ -5,7 +5,7 @@ from rag.model.model_Provider import ModelProvider
 from rag.utils.contracts import RetrievedChunk,ParsedAnswer
 from rag.prompt import build_evidence_block,build_prompt
 from rag.parsing import parse_model_output
-
+from rag.abstain import should_abstain
 def answer_question(
         question:str,
         chunks:Sequence[RetrievedChunk],
@@ -13,9 +13,13 @@ def answer_question(
 )->ParsedAnswer:
     
     evidence_block, evidence_items = build_evidence_block(chunks)
+    abst_decision=should_abstain(query=question,retrieved=chunks)
+    print(abst_decision)
+#     if abst_decision.abstain:
+#         print(f"Abstain the chunks becuase of :{abst_decision.reasons}")
+
     prompt=build_prompt(question,evidence_block)
     raw=model.get_response(prompt)
-
     parsed=parse_model_output(raw,evidence_items)
 
     return parsed
