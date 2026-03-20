@@ -1,6 +1,6 @@
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Any,Dict,List,Optional, Set
+from dataclasses import dataclass,field
+from typing import Any,Dict,List,Optional, Set, Literal
 from pathlib import Path
 ##Chunking 
 @dataclass(frozen=True)
@@ -109,14 +109,53 @@ needs: List[str]: if abstained, the clarifying items after NEED:; otherwise empt
 raw_text: str: the exact raw model output (always stored for debugging).\n
 parse_warnings: List[str]: parser flags like missing citations, invalid tags, wrong bullet count, etc.\n
     '''
-    mode:str
-    bullets:List[str]
-    citation_by_bullet:List[List[str]]
-    resolved_chunk_ids_by_bullet :List[List[str]]
-    abstain_reason:Optional[str]
-    needs:List[str]
-    raw_text:str
-    parse_warning:List[str]
+    """
+    Internal parsed representation of the model output.
+
+    mode:
+        "answer"   -> normal grounded answer
+        "abstain"  -> model abstained
+        "parse_error" -> model output could not be parsed into a valid answer/abstention
+    """
+
+    mode: Literal["answer", "abstain", "parse_error"]
+    bullets: List[str] = field(default_factory=list)
+    citation_by_bullets: List[List[str]] = field(default_factory=list)
+    resolved_chunk_ids_by_bullet: List[List[str]] = field(default_factory=list)
+    abstain_reason: Optional[str] = None
+    needs: List[str] = field(default_factory=list)
+    raw_text: str = ""
+    parse_warnings: List[str] = field(default_factory=list)
+
+    def __post_init__(self) -> None:
+        if self.mode == "answer":
+            if self.abstain_reason is not None:
+                self.parse_warnings.append("answer_mode_with_abstain_reason")
+            if self.needs:
+                self.parse_warnings.append("answer_mode_with_needs")
+
+            if len(self.citation_by_bullets) != len(self.bullets):
+                self.parse_warnings.append(
+                    f"citation_by_bullets_length_mismatch:{len(self.citation_by_bullets)}!={len(self.bullets)}"
+                )
+
+            if len(self.resolved_chunk_ids_by_bullet) != len(self.bullets):
+                self.parse_warnings.append(
+                    f"resolved_chunk_ids_by_bullet_length_mismatch:{len(self.resolved_chunk_ids_by_bullet)}!={len(self.bullets)}"
+                )
+
+        elif self.mode == "abstain":
+            if self.bullets:
+                self.parse_warnings.append("abstain_mode_with_bullets")
+            if self.citation_by_bullets:
+                self.parse_warnings.append("abstain_mode_with_citations")
+            if self.resolved_chunk_ids_by_bullet:
+                self.parse_warnings.append("abstain_mode_with_resolved_chunk_ids")
+
+        elif self.mode == "parse_error":
+            # Parse-error is intentionally permissive, but still useful to flag.
+            if self.abstain_reason is not None and self.bullets:
+                self.parse_warnings.append("parse_error_with_mixed_answer_and_abstain_fields")
 
 
 ### Eval Contracts 
@@ -146,3 +185,19 @@ class PerQueryResult:
     retrieved_chunk_ids: List[str]
     first_hit_rank: Optional[int]
     latency_ms: float
+
+
+@dataclass 
+class PipelineTimings:
+    embed: Optional[float] = None
+    retrieve: Optional[float] = None
+    rerank: Optional[float] = None
+    generate: Optional[float] = None
+    total: Optional[float] = None
+
+@dataclass 
+class PipelineResult:
+    parsed_output:ParsedAnswer
+    retrieved_chunks:list[RetrievedChunk]
+    timings_ms: PipelineTimings = field(default_factory=PipelineTimings)
+
