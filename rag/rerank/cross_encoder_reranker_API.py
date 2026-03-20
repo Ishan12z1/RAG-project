@@ -7,6 +7,7 @@ from rag.utils.contracts import RetrievedChunk
 from typing import Sequence, Optional
 import requests
 import torch
+import yaml
 
 @dataclass
 class CrossEncoderConfig:
@@ -22,18 +23,32 @@ class APIModel():
         pass
 
 class CrossEncoderReranker(Reranker):
-    def __init__(self,config:CrossEncoderConfig=CrossEncoderConfig()):
-        self.cfg=config
+    def __init__(self,config_path:str):
+        self.cfg=self._load_config(config_path) 
         if self.cfg.model_type=="local":
             if self.cfg.device:
                 self.model=CrossEncoder(self.cfg.model_name,device=self.cfg.device)
             else:
                 self.model=CrossEncoder(self.cfg.model_name)
 
-    def rerank(self,query:str, candidates:Sequence[RetrievedChunk])->list[tuple[RetrievedChunk,float]] | None:
+    def _load_config(self,path:str)->CrossEncoderConfig:
+        with open(path,"r") as f:
+            config=yaml.safe_load(f)
+
+        return CrossEncoderConfig(
+            model_name=config.get("model_name", "cross-encoder/ms-marco-MiniLM-L-6-v2"),
+            model_type=config.get("model_type", "api"),
+            batch_size=config.get("batch_size", 16),
+            max_text_chars=config.get("max_text_chars", 2000),
+            normalize_scores=config.get("normalize_scores", False),
+            device=config.get("device", "cuda" if torch.cuda.is_available() else "cpu"),
+            url=config.get("url")
+        )
+
+    def rerank(self,query:str, candidates:Sequence[RetrievedChunk])->list[tuple[RetrievedChunk,float]]:
 
         if not candidates:
-            return []
+            raise KeyError("Candidates not found")
         
         chunks:list[RetrievedChunk]=[]
         pairs:list[tuple[str,str]]=[]
