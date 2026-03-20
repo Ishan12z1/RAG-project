@@ -28,8 +28,6 @@ def assign_citation_tags(chunks: Sequence[RetrievedChunk]) -> List[EvidenceItem]
                 metadata=dict(ch.metadata) if ch.metadata is not None else {},
             )
         )
-        if i==1:
-            print(ch.metadata)
     return items
 
 def _truncate(text:str,max_chars:int)->str:
