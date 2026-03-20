@@ -1,0 +1,7 @@
+chunking_loc: "data//run_2//processed_chunks.parquet"
+embedding_loc: "data//run_2//embeddings"
+indexing_loc:  "data//run_2//index//flat_ip//b401572ca42d"
+bm25_path: "artifacts//bm25"
+chunk_store_path: "data//run_2//processed_chunks.parquet"
+reranker_config_path: "configs//reranker_config.yaml"
+"api_url": "https://534d-34-87-148-149.ngrok-free.app"

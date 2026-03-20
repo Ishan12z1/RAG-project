@@ -1,0 +1,6 @@
+model_name : "cross-encoder/ms-marco-MiniLM-L-6-v2"
+model_type: "api" # can be api, local
+batch_size: 16
+max_text_chars: 2000
+normalize_scores: false
+url: "https://534d-34-87-148-149.ngrok-free.app"
