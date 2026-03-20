@@ -3,29 +3,30 @@ from __future__ import annotations
 from rag.retrieval.bm25_index import BM25Index
 from rag.retrieval.hybrid import blend_scores
 from rag.retrieval.retrieve import Retriever
-from rag.utils.contracts import RetrievedChunk
+from rag.utils.contracts import RetrievedChunk, Citation
 import pandas as pd 
+from rag.retrieval.utils import build_retrieved_chunk_from_row
+import time
 
 class ChunkStore:
-    def __init__(self,path:str):
-        chunks_df=pd.read_parquet(path)
-        self._chunks:dict[str,RetrievedChunk]={}
+    def __init__(self, path: str):
+        chunks_df = pd.read_parquet(path)
+        chunks_df["chunk_id"] = chunks_df["chunk_id"].astype(str)
 
-        for row in chunks_df.itertuples(index=False):
+        if chunks_df["chunk_id"].duplicated().any():
+            raise ValueError("ChunkStore parquet has duplicate chunk_id values")
 
-            self._chunks[row.chunk_id]=RetrievedChunk(
-                chunk_id=row.chunk_id,
-                score=0.0,
-                text=row.chunk_text,
-                citation=row.url,
-                metadata=getattr(row,"metadata",None),
-            )
+        self._chunks: dict[str, RetrievedChunk] = {}
 
-    def get(self,id:str)->RetrievedChunk:
+        for row in chunks_df.to_dict(orient="records"):
+            chunk = build_retrieved_chunk_from_row(row, score=0.0)
+            self._chunks[chunk.chunk_id] = chunk
+
+    def get(self, id: str) -> RetrievedChunk:
         try:
-            return self._chunks[id]
-        except KeyError as e :
-            raise KeyError(f"Chunk id not found : {id}") from e
+            return self._chunks[str(id)]
+        except KeyError as e:
+            raise KeyError(f"Chunk id not found: {id}") from e
 
 class HybridRetriever:
     def __init__(
@@ -46,9 +47,10 @@ class HybridRetriever:
         self.bm25_candidate_k = bm25_candidate_k
 
     
-    def retrieve(self,query:str, top_k:int)->list[RetrievedChunk]:
+    def retrieve(self,query:str, top_k:int)->tuple[list[RetrievedChunk],float,float]:
+        hybrid_retrieve_start=time.perf_counter()
+        dense_hits,embed_time,base_retrieve_time=self.dense.retrieve(query,top_k=top_k)
         
-        dense_hits=self.dense.retrieve(query,top_k=top_k)
         dense_by_id:dict[str,RetrievedChunk]={ch.chunk_id:ch for ch in dense_hits }
         
         dense_scores:dict[str,float]={ch.chunk_id : float(ch.score) for ch in dense_hits}
@@ -74,5 +76,5 @@ class HybridRetriever:
                     rank=rank_idx,
                 )
             )
-
-        return out
+        total_hybrid_retrieve_time=(time.perf_counter()-hybrid_retrieve_start)*1000
+        return out,embed_time,total_hybrid_retrieve_time
