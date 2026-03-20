@@ -14,7 +14,8 @@ from rag.embedding.embedding_provider import ProviderSpec
 from rag.embedding.hf_embeddings import SentTransEmb
 from rag.utils.helper_functions import _l2_normalize, read_meta
 from rag.utils.contracts import Citation,RetrievedChunk
-
+from rag.retrieval.utils import build_retrieved_chunk_from_row
+import time
 REQUIRED_CITATION_KEYS = ("source", "title", "section", "chunk_id","doc_id","url")
 
 
@@ -153,77 +154,78 @@ class Retriever:
             else:
                 self.score_mode = "ip"
 
-    def retrieve(self,query:str,top_k:int=5,filters:Optional[Dict[str,Any]]=None,oversample:int=2)->List[RetrievedChunk]:
+    def retrieve(
+        self,
+        query: str,
+        top_k: int = 5,
+        filters: Optional[Dict[str, Any]] = None,
+        oversample: int = 2,
+    ) -> tuple[List[RetrievedChunk], float, float]:
+        start_time = time.perf_counter()
 
-        q_text=query.strip()
+        q_text = query.strip()
         if not q_text:
-            return []
-        # BGE query prefix (safe even if docs weren’t prefixed; main mismatch is doc side) 
-        if self.emb_meta["model_name"].startswith("BAAI/bge"):
-            q_text=f"query: {q_text}"
+            return [], 0.0, 0.0
 
-        q_vec=self.provider.embed_texts([q_text])
-        q=np.array(q_vec,dtype=np.float32)
-        if q.ndim != 2 or q.shape[0] != 1:
-            raise ValueError(f"Query dim {q.shape[1]} != index dim {self.dim}")
-        q=np.ascontiguousarray(q)
+        if self.emb_meta["model_name"].startswith("BAAI/bge"):
+            q_text = f"query: {q_text}"
+
+        embed_start = time.perf_counter()
+        q_vec = self.provider.embed_texts([q_text])
+        q = np.array(q_vec, dtype=np.float32)
+
+        if q.ndim != 2 or q.shape[0] != 1 or q.shape[1] != self.dim:
+            raise ValueError(f"Bad query shape {q.shape}; expected (1, {self.dim})")
+
+        q = np.ascontiguousarray(q)
 
         if self.normalized:
-            q=_l2_normalize(q)
+            q = _l2_normalize(q)
 
-        #Calls self.index.search(q, top_k):
-            # D = scores/distances (shape (1, top_k))
-            # I = row indices in the FAISS index (shape (1, top_k))
+        embed_time_ms = (time.perf_counter() - embed_start) * 1000
 
-        k_search =max(top_k,1) * max(oversample,1)
-        
-        D,I =self.index.search(q,k_search)
-        
+        k_search = max(top_k, 1) * max(oversample, 1)
+        D, I = self.index.search(q, k_search)
 
-        candidates: List[RetrievedChunk]=[]
-        filt=filters or {}
+        candidates: List[RetrievedChunk] = []
+        filt = filters or {}
 
-        for raw_score,row_idx in zip(D[0].tolist(),I[0].tolist()):
-            if row_idx< 0 :
-                continue 
-            if row_idx >= len(self.chunk_ids):
+        for raw_score, row_idx in zip(D[0].tolist(), I[0].tolist()):
+            if row_idx < 0 or row_idx >= len(self.chunk_ids):
                 continue
 
-            cid=self.chunk_ids[row_idx]
-            if str(cid) not in self.chunks_df.index:
+            cid = self.chunk_ids[row_idx]
+            cid_str = str(cid)
+
+            if cid_str not in self.chunks_df.index:
                 continue
 
-            r0=self.chunks_df.loc[str(cid)].to_dict()
-            text=str(r0.get("chunk_text",""))
+            r0 = self.chunks_df.loc[cid_str].to_dict()
             r0["chunk_id"] = str(r0.get("chunk_id", cid))
 
             citation, extra_md = _normalize_citation_fields(r0)
 
             md_view = {
-                        **extra_md,
-                        "source": citation.source,
-                        "title": citation.title,
-                        "section": citation.section,
-                        "doc_id": citation.doc_id,
-                    }
-            if filt and not _match_filters(md_view,filt):
-                continue
-            
-            score= _standardize_score(raw_score,self.score_mode)
+                **extra_md,
+                "source": citation.source,
+                "title": citation.title,
+                "section": citation.section,
+                "doc_id": citation.doc_id,
+                "url": citation.url,
+                "chunk_id": citation.chunk_id,
+            }
 
-            candidates.append(
-                RetrievedChunk(
-                    chunk_id=citation.chunk_id,
-                    score=score,
-                    text=text,
-                    citation=citation,
-                    metadata=extra_md,
-                )
-            )
+            if filt and not _match_filters(md_view, filt):
+                continue
+
+            score = _standardize_score(raw_score, self.score_mode)
+            chunk = build_retrieved_chunk_from_row(r0, score=score)
+            candidates.append(chunk)
 
             if len(candidates) >= top_k and not filt:
                 break
 
         candidates.sort(key=lambda r: (-r.score, r.chunk_id))
-            
-        return candidates[:top_k]
+
+        total_time_ms = (time.perf_counter() - start_time) * 1000
+        return candidates[:top_k], embed_time_ms, total_time_ms
