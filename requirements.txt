@@ -13,3 +13,6 @@ beautifulsoup4
 pypdf 
 nltk
 scikit-learn
+fastapi
+uvicorn
+pydantic
