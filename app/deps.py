@@ -1,9 +1,14 @@
 from functools import lru_cache
 from rag.chat import RAGPipeline
+import yaml
 
 CONFIG_PATH="configs/chat_config.yaml"
 
-
+@lru_cache
+def get_runtime_config() -> dict:
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+    
 def get_app_version()->str:
     return "0.1.0"
 

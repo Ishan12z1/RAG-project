@@ -105,6 +105,3 @@ class RAGPipeline:
     def _load_config(self,path:str):
         with open(path,"r") as f:
             return yaml.safe_load(f)
-
-chat=RAGPipeline()
-chat.run("What is diabetes ?")

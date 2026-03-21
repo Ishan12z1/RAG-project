@@ -206,4 +206,5 @@ class PipelineResult:
     timings_ms: PipelineTimings = field(default_factory=PipelineTimings)
     cache_hits: CacheHitInfo = field(default_factory=CacheHitInfo)
     cache_stats: Dict[str, Any] = field(default_factory=dict)
+    versions: Dict[str, str] = field(default_factory=dict)
 
