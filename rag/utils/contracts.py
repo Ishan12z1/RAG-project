@@ -186,6 +186,10 @@ class PerQueryResult:
     first_hit_rank: Optional[int]
     latency_ms: float
 
+@dataclass(frozen=True)
+class CacheHitInfo:
+    embedding: Optional[bool] = None
+    retrieval: Optional[bool] = None
 
 @dataclass 
 class PipelineTimings:
@@ -200,4 +204,6 @@ class PipelineResult:
     parsed_output:ParsedAnswer
     retrieved_chunks:list[RetrievedChunk]
     timings_ms: PipelineTimings = field(default_factory=PipelineTimings)
+    cache_hits: CacheHitInfo = field(default_factory=CacheHitInfo)
+    cache_stats: Dict[str, Any] = field(default_factory=dict)
 

@@ -4,16 +4,14 @@ from rag.pipeline import answer_question
 from rag.retrieval.retrieve import Retriever
 # from rag.model.model_ollamma import OllamaModel
 from rag.model.model_collab import CollabModel
-from rag.model.model_Provider import ModelSpec
 from rag.abstain import should_abstain
 from rag.retrieval import BM25Index,ChunkStore,HybridRerankRetriever,HybridRetriever
-from rag.rerank.cross_encoder_reranker_API import CrossEncoderReranker,CrossEncoderConfig
-import torch
+from rag.rerank.cross_encoder_reranker_API import CrossEncoderReranker
 import yaml
 from rag.prompt import build_evidence_block,build_prompt
 from rag.parsing import parse_model_output
 from rag.abstain import should_abstain
-from rag.utils.contracts import PipelineResult, Citation, PipelineTimings,ParsedAnswer
+from rag.utils.contracts import PipelineResult, Citation, PipelineTimings,CacheHitInfo
 import time
 
 
@@ -33,7 +31,7 @@ class RAGPipeline:
     def run(self,query:str,top_k:int=5):
 
         total_start = time.perf_counter()
-        chunks,embed_ms,retrieve_ms,rerank_ms=self.hybrid_retriever_reranker.retrieve(query=query,top_k=top_k)
+        chunks,embed_ms,retrieve_ms,rerank_ms,embedding_cache_hit =self.hybrid_retriever_reranker.retrieve(query=query,top_k=top_k)
 
 
         for ch in chunks:
@@ -65,6 +63,13 @@ class RAGPipeline:
         #             generate=None,
         #             total=total_ms,
         #         ),
+                # cache_hits=CacheHitInfo(
+                # embedding=embedding_cache_hit,
+                # retrieval=None,
+                # ),
+                # cache_stats={
+                # "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
+                # },
         #        )
         evidence_block, evidence_items = build_evidence_block(chunks)
         prompt=build_prompt(query,evidence_block)
@@ -87,6 +92,13 @@ class RAGPipeline:
                 generate=generate_ms,
                 total=total_ms,
             ),
+            cache_hits=CacheHitInfo(
+            embedding=embedding_cache_hit,
+            retrieval=None,
+            ),
+            cache_stats={
+            "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
+            },
         )
 
 

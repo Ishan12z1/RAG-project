@@ -18,8 +18,8 @@ class ChunkStore:
 
         self._chunks: dict[str, RetrievedChunk] = {}
 
-        for row in chunks_df.to_dict(orient="records"):
-            chunk = build_retrieved_chunk_from_row(row, score=0.0)
+        for _, row in chunks_df.iterrows():
+            chunk = build_retrieved_chunk_from_row(row.to_dict(), score=0.0)
             self._chunks[chunk.chunk_id] = chunk
 
     def get(self, id: str) -> RetrievedChunk:
@@ -47,9 +47,9 @@ class HybridRetriever:
         self.bm25_candidate_k = bm25_candidate_k
 
     
-    def retrieve(self,query:str, top_k:int)->tuple[list[RetrievedChunk],float,float]:
+    def retrieve(self,query:str, top_k:int)->tuple[list[RetrievedChunk],float,float,bool]:
         hybrid_retrieve_start=time.perf_counter()
-        dense_hits,embed_time,base_retrieve_time=self.dense.retrieve(query,top_k=top_k)
+        dense_hits,embed_time,base_retrieve_time, embedding_cache_hit =self.dense.retrieve(query,top_k=top_k)
         
         dense_by_id:dict[str,RetrievedChunk]={ch.chunk_id:ch for ch in dense_hits }
         
@@ -77,4 +77,4 @@ class HybridRetriever:
                 )
             )
         total_hybrid_retrieve_time=(time.perf_counter()-hybrid_retrieve_start)*1000
-        return out,embed_time,total_hybrid_retrieve_time
+        return out,embed_time,total_hybrid_retrieve_time,embedding_cache_hit 

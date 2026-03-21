@@ -9,7 +9,8 @@ import numpy as np
 import pandas as pd 
 import faiss
 import json
-
+from collections import OrderedDict
+from threading import Lock
 from rag.embedding.embedding_provider import ProviderSpec
 from rag.embedding.hf_embeddings import SentTransEmb
 from rag.utils.helper_functions import _l2_normalize, read_meta
@@ -127,7 +128,8 @@ class Retriever:
         index_dir:str,
         embeddings_dir:str,
         chunks_path:str="data/processed_chunks.parquet",
-        device:str="cpu"
+        device:str="cpu",
+        embedding_cache_size:int=512,
         ):
         self.index_dir=Path(index_dir)
         self.emb_dir=Path(embeddings_dir)
@@ -153,22 +155,56 @@ class Retriever:
                 self.score_mode = "l2"
             else:
                 self.score_mode = "ip"
+        # in memory caching 
+        self.embedding_cache_size=embedding_cache_size
+        self._embedding_cache:OrderedDict[tuple[str,str],np.ndarray]=OrderedDict()
+        self._embedding_cache_lock=Lock()
+        self._embedding_cache_hits = 0
+        self._embedding_cache_misses = 0
 
-    def retrieve(
-        self,
-        query: str,
-        top_k: int = 5,
-        filters: Optional[Dict[str, Any]] = None,
-        oversample: int = 2,
-    ) -> tuple[List[RetrievedChunk], float, float]:
-        start_time = time.perf_counter()
 
+    def _normalize_query_for_cache(self,query:str)->str:
+        return " ".join(query.strip().split())
+
+    def _prepare_query_text(self, query: str) -> str:
         q_text = query.strip()
-        if not q_text:
-            return [], 0.0, 0.0
-
         if self.emb_meta["model_name"].startswith("BAAI/bge"):
             q_text = f"query: {q_text}"
+        return q_text
+    
+    def _embedding_cache_key(self, query: str) -> tuple[str, str]:
+        return (
+            str(self.emb_meta["model_name"]),
+            self._normalize_query_for_cache(query),
+        )
+    
+    def _get_cached_embedding(self, cache_key: tuple[str, str]) -> Optional[np.ndarray]:
+        with self._embedding_cache_lock:
+            cached = self._embedding_cache.get(cache_key)
+            if cached is None:
+                return None
+
+            self._embedding_cache.move_to_end(cache_key)
+            self._embedding_cache_hits += 1
+            return np.ascontiguousarray(cached.copy())
+    
+    def _store_embedding(self, cache_key: tuple[str, str], query_vector: np.ndarray) -> None:
+        with self._embedding_cache_lock:
+            self._embedding_cache_misses += 1
+            self._embedding_cache[cache_key] = np.ascontiguousarray(query_vector.copy())
+            self._embedding_cache.move_to_end(cache_key)
+
+            if len(self._embedding_cache) > self.embedding_cache_size:
+                self._embedding_cache.popitem(last=False)
+
+    def _embed_query(self, query: str) -> tuple[np.ndarray, float, bool]:
+        cache_key = self._embedding_cache_key(query)
+
+        cached = self._get_cached_embedding(cache_key)
+        if cached is not None:
+            return cached, 0.0, True
+
+        q_text = self._prepare_query_text(query)
 
         embed_start = time.perf_counter()
         q_vec = self.provider.embed_texts([q_text])
@@ -183,6 +219,30 @@ class Retriever:
             q = _l2_normalize(q)
 
         embed_time_ms = (time.perf_counter() - embed_start) * 1000
+        self._store_embedding(cache_key, q)
+        return q, embed_time_ms, False
+    
+    def get_embedding_cache_stats(self) -> Dict[str, int]:
+        with self._embedding_cache_lock:
+            return {
+                "hits": self._embedding_cache_hits,
+                "misses": self._embedding_cache_misses,
+                "size": len(self._embedding_cache),
+                "capacity": self.embedding_cache_size,
+            }
+
+    def retrieve(
+        self,
+        query: str,
+        top_k: int = 5,
+        filters: Optional[Dict[str, Any]] = None,
+        oversample: int = 2,
+    ) -> tuple[List[RetrievedChunk], float, float, bool]:
+        start_time = time.perf_counter()
+
+        if not query.strip():
+            return [], 0.0, 0.0, False
+        q, embed_time_ms, embedding_cache_hit = self._embed_query(query)
 
         k_search = max(top_k, 1) * max(oversample, 1)
         D, I = self.index.search(q, k_search)
@@ -228,4 +288,5 @@ class Retriever:
         candidates.sort(key=lambda r: (-r.score, r.chunk_id))
 
         total_time_ms = (time.perf_counter() - start_time) * 1000
-        return candidates[:top_k], embed_time_ms, total_time_ms
+        
+        return candidates[:top_k], embed_time_ms, total_time_ms, embedding_cache_hit

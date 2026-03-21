@@ -1,5 +1,14 @@
 from fastapi import APIRouter, Depends, Request
-from app.schemas import TimingInfo,ChatbotRequest,ChatResponse, HealthResponse,MetricsResponse, Citation as SchemaCitation
+from app.schemas import (
+    TimingInfo,
+    ChatbotRequest,
+    ChatResponse,
+    HealthResponse,
+    MetricsResponse,
+    Citation as SchemaCitation,
+    CacheInfo,
+    DebugInfo,
+)
 from app.deps import get_app_version,get_pipeline
 from rag.chat import RAGPipeline
 from app.utils import get_used_citations,format_answer, log_json
@@ -35,7 +44,14 @@ def chat(
             )
             for c in citations
         ]
-
+        debug_info = None
+        if payload.debug:
+            debug_info = DebugInfo(
+                cache_hits=CacheInfo(
+                    embedding=result.cache_hits.embedding,
+                    retrieval=result.cache_hits.retrieval,
+                )
+            )
         response = ChatResponse(
             answer=answer_text,
             citations=schema_citations,
@@ -48,9 +64,8 @@ def chat(
                 generate=result.timings_ms.generate,
                 total=result.timings_ms.total,
             ),
-            debug=None,
+            debug=debug_info,
         )
-
         log_json(
             {
                 "event": "chat_request",
@@ -63,6 +78,11 @@ def chat(
                 "parse_warnings": result.parsed_output.parse_warnings,
                 "citation_count": len(schema_citations),
                 "retrieved_chunk_count": len(result.retrieved_chunks),
+                "cache_hits": {
+                    "embedding": result.cache_hits.embedding,
+                    "retrieval": result.cache_hits.retrieval,
+                },
+                "cache_stats": result.cache_stats,
                 "timings_ms": {
                     "embed": result.timings_ms.embed,
                     "retrieve": result.timings_ms.retrieve,
@@ -73,6 +93,7 @@ def chat(
                 "status": "ok",
             }
         )
+
 
         return response
 
