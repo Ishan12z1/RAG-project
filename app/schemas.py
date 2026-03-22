@@ -53,8 +53,10 @@ class MetricsResponse(BaseModel):
     p50_ms: Optional[float] = None
     p95_ms: Optional[float] = None
 
+class ErrorDetail(BaseModel):
+    code:str
+    message:str
 
 class ErrorResponse(BaseModel):
-    error: str
-    message: str
+    error: ErrorDetail
     request_id: Optional[str] = None

@@ -3,7 +3,11 @@ from app.routes import router
 from app.deps import get_app_version
 from app.utils import configure_logging
 from uuid import uuid4
-
+from error_handler import RAGAppError
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from app.utils import configure_logging,log_json
+from app.schemas import ErrorDetail,ErrorResponse
 def create_app()->FastAPI:
     configure_logging()
 
@@ -22,6 +26,78 @@ def create_app()->FastAPI:
         response.headers["X-Request-ID"] = request.state.request_id
         return response
 
+    @app.exception_handler(RAGAppError)
+    async def handle_rag_app_error(request: Request, exc: RAGAppError):
+        request_id = getattr(request.state, "request_id", None)
+
+        log_json(
+            {
+                "event": "request_error",
+                "request_id": request_id,
+                "path": request.url.path,
+                "status": "error",
+                "error_type": exc.code,
+                "error_message": exc.message,
+                "status_code": exc.status_code,
+            }
+        )
+
+        body = ErrorResponse(
+            error=ErrorDetail(code=exc.code, message=exc.message),
+            request_id=request_id,
+        )
+        return JSONResponse(status_code=exc.status_code, content=body.model_dump())
+
+    @app.exception_handler(RequestValidationError)
+    async def handle_validation_error(request: Request, exc: RequestValidationError):
+        request_id = getattr(request.state, "request_id", None)
+
+        log_json(
+            {
+                "event": "request_error",
+                "request_id": request_id,
+                "path": request.url.path,
+                "status": "error",
+                "error_type": "INVALID_REQUEST",
+                "error_message": "Request validation failed.",
+                "status_code": 422,
+                "details": exc.errors(),
+            }
+        )
+
+        body = ErrorResponse(
+            error=ErrorDetail(
+                code="INVALID_REQUEST",
+                message="Request validation failed.",
+            ),
+            request_id=request_id,
+        )
+        return JSONResponse(status_code=422, content=body.model_dump())
+
+    @app.exception_handler(Exception)
+    async def handle_unexpected_error(request: Request, exc: Exception):
+        request_id = getattr(request.state, "request_id", None)
+
+        log_json(
+            {
+                "event": "request_error",
+                "request_id": request_id,
+                "path": request.url.path,
+                "status": "error",
+                "error_type": type(exc).__name__,
+                "error_message": str(exc),
+                "status_code": 500,
+            }
+        )
+
+        body = ErrorResponse(
+            error=ErrorDetail(
+                code="INTERNAL_ERROR",
+                message="Internal server error.",
+            ),
+            request_id=request_id,
+        )
+        return JSONResponse(status_code=500, content=body.model_dump())
 
     return app
 
