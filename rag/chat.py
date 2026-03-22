@@ -29,7 +29,13 @@ class RAGPipeline:
 
         self.reranker=CrossEncoderReranker(config_path=self.config["reranker_config_path"])
         self.hybrid_retriever_reranker=HybridRerankRetriever(retriever=self.hybrid_retriever,reranker=self.reranker)
-        self.model=CollabModel(self.config["api_url"])
+        timeout_cfg = self.config.get("timeouts", {}) or {}
+        self.model = CollabModel(
+            self.config["api_url"],
+            timeout_s=float(timeout_cfg.get("generation_timeout_s", 60)),
+            max_retries=int(timeout_cfg.get("generation_max_retries", 0)),
+            backoff_s=float(timeout_cfg.get("generation_backoff_s", 0.0)),
+)
         self.versions = build_pipeline_versions(
             config=self.config,
             dense_retriever=self.hybrid_retriever.dense,

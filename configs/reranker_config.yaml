@@ -3,4 +3,8 @@ model_type: "api" # can be api, local
 batch_size: 16
 max_text_chars: 2000
 normalize_scores: false
-url: "https://534d-34-87-148-149.ngrok-free.app"
+url: "https://222e-34-186-18-48.ngrok-free.app"
+timeout_s: 20
+max_retries: 1
+backoff_s: 0.5
+backoff_multiplier: 2.0

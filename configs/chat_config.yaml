@@ -4,4 +4,26 @@ indexing_loc:  "data//run_2//index//flat_ip//b401572ca42d"
 bm25_path: "artifacts//bm25"
 chunk_store_path: "data//run_2//processed_chunks.parquet"
 reranker_config_path: "configs//reranker_config.yaml"
-"api_url": "https://534d-34-87-148-149.ngrok-free.app"
+"api_url": "https://222e-34-186-18-48.ngrok-free.app"
+
+versions:
+  app_version: "0.1.0"
+  service_name: "rag-assistant"
+  generation_model_name: "llama-3.1-8b-instruct"
+
+timeouts:
+  generation_timeout_s: 60
+  generation_max_retries: 0
+  generation_backoff_s: 0.0
+
+cors:
+  allow_origins:
+    - "http://localhost:3000"
+    - "http://127.0.0.1:3000"
+    - "http://localhost:5173"
+    - "http://127.0.0.1:5173"
+  allow_credentials: true
+  allow_methods:
+    - "*"
+  allow_headers:
+    - "*"

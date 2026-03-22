@@ -105,6 +105,10 @@ def chat(
                 "generate": result.timings_ms.generate,
                 "total": result.timings_ms.total,
             },
+            "transport": {
+                "generation": getattr(pipeline.model, "last_call_meta", None),
+                "reranker": getattr(pipeline.reranker, "last_call_meta", None),
+            },
             "status": "ok",
         }
     )
