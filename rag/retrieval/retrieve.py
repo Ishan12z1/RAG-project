@@ -229,20 +229,21 @@ class Retriever:
                 "misses": self._embedding_cache_misses,
                 "size": len(self._embedding_cache),
                 "capacity": self.embedding_cache_size,
-            }
-
-    def retrieve(
+                }
+        
+    def search_with_query_vector(
         self,
-        query: str,
+        q: np.ndarray,
         top_k: int = 5,
         filters: Optional[Dict[str, Any]] = None,
         oversample: int = 2,
-    ) -> tuple[List[RetrievedChunk], float, float, bool]:
-        start_time = time.perf_counter()
+    ) -> tuple[List[RetrievedChunk], float]:
+        retrieve_start = time.perf_counter()
 
-        if not query.strip():
-            return [], 0.0, 0.0, False
-        q, embed_time_ms, embedding_cache_hit = self._embed_query(query)
+        if q.ndim != 2 or q.shape[0] != 1 or q.shape[1] != self.dim:
+            raise ValueError(f"Bad query shape {q.shape}; expected (1, {self.dim})")
+
+        q = np.ascontiguousarray(q, dtype=np.float32)
 
         k_search = max(top_k, 1) * max(oversample, 1)
         D, I = self.index.search(q, k_search)
@@ -286,7 +287,28 @@ class Retriever:
                 break
 
         candidates.sort(key=lambda r: (-r.score, r.chunk_id))
+        retrieve_time_ms = (time.perf_counter() - retrieve_start) * 1000
+        return candidates[:top_k], retrieve_time_ms
+
+
+    def retrieve(
+        self,
+        query: str,
+        top_k: int = 5,
+        filters: Optional[Dict[str, Any]] = None,
+        oversample: int = 2,
+    ) -> tuple[List[RetrievedChunk], float, float, bool]:
+        start_time = time.perf_counter()
+
+        if not query.strip():
+            return [], 0.0, 0.0, False
+        q, embed_time_ms, embedding_cache_hit = self._embed_query(query)
+        hits,_=self.search_with_query_vector(
+            q,
+            top_k=top_k,
+            oversample=oversample
+        )
 
         total_time_ms = (time.perf_counter() - start_time) * 1000
         
-        return candidates[:top_k], embed_time_ms, total_time_ms, embedding_cache_hit
+        return hits, embed_time_ms, total_time_ms, embedding_cache_hit

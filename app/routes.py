@@ -50,7 +50,8 @@ def chat(
                 cache_hits=CacheInfo(
                     embedding=result.cache_hits.embedding,
                     retrieval=result.cache_hits.retrieval,
-                )
+                ),
+                versions=result.versions
             )
         response = ChatResponse(
             answer=answer_text,
@@ -83,6 +84,7 @@ def chat(
                     "retrieval": result.cache_hits.retrieval,
                 },
                 "cache_stats": result.cache_stats,
+                "versions": result.versions,
                 "timings_ms": {
                     "embed": result.timings_ms.embed,
                     "retrieve": result.timings_ms.retrieve,

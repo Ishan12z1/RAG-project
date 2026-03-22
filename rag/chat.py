@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from rag.pipeline import answer_question
 from rag.retrieval.retrieve import Retriever
 # from rag.model.model_ollamma import OllamaModel
 from rag.model.model_collab import CollabModel
@@ -31,8 +30,9 @@ class RAGPipeline:
     def run(self,query:str,top_k:int=5):
 
         total_start = time.perf_counter()
-        chunks,embed_ms,retrieve_ms,rerank_ms,embedding_cache_hit =self.hybrid_retriever_reranker.retrieve(query=query,top_k=top_k)
-
+        chunks, embed_ms, retrieve_ms, rerank_ms, embedding_cache_hit, retrieval_cache_hit = (
+                self.hybrid_retriever_reranker.retrieve(query=query, top_k=top_k)
+    )
 
         for ch in chunks:
             if not isinstance(ch.citation, Citation):
@@ -69,6 +69,7 @@ class RAGPipeline:
                 # ),
                 # cache_stats={
                 # "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
+                # "retrieval": self.hybrid_retriever.get_retrieval_cache_stats(),
                 # },
         #        )
         evidence_block, evidence_items = build_evidence_block(chunks)
@@ -94,10 +95,11 @@ class RAGPipeline:
             ),
             cache_hits=CacheHitInfo(
             embedding=embedding_cache_hit,
-            retrieval=None,
+            retrieval=retrieval_cache_hit,
             ),
             cache_stats={
             "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
+            "retrieval": self.hybrid_retriever.get_retrieval_cache_stats(),
             },
         )
 

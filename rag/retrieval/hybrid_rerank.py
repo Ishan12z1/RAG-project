@@ -8,21 +8,34 @@ class HybridRerankRetriever:
         self.reranker=reranker
         self.candidate_k=candidate_k
     
-    def retrieve(self,query:str,top_k:int)->tuple[list[RetrievedChunk],float,float,float,bool]:
+    def retrieve(
+        self,
+        query: str,
+        top_k: int,
+    ) -> tuple[list[RetrievedChunk], float, float, float, bool, bool]:
+        chunks, embed_time, retrieve_time, embedding_cache_hit, retrieval_cache_hit = (
+            self.retriever.retrieve(
+                query=query,
+                top_k=max(self.candidate_k, top_k),
+            )
+        )
 
-        chunks,embed_time,retrieve_time,embedding_cache_hit=self.retriever.retrieve(query=query,top_k=max(self.candidate_k,top_k))
-        reranked_start=time.perf_counter()
-        reranked_chunks=self.reranker.rerank(query=query,candidates=chunks)
-        reranked_chunks.sort(key=lambda x:x[1],reverse=True)
+        reranked_start = time.perf_counter()
+        reranked_chunks = self.reranker.rerank(query=query, candidates=chunks)
+        reranked_chunks.sort(key=lambda x: x[1], reverse=True)
+
         out = []
         for i, (chunk, sc) in enumerate(reranked_chunks[:top_k], start=1):
-            out.append(RetrievedChunk(
-                chunk_id=chunk.chunk_id,
-                score=sc,
-                text=chunk.text,
-                citation=chunk.citation,
-                metadata=chunk.metadata,
-                rank=i
-            ))
-        reranked_ms=(time.perf_counter()-reranked_start)*1000
-        return out,embed_time,retrieve_time,reranked_ms,embedding_cache_hit
+            out.append(
+                RetrievedChunk(
+                    chunk_id=chunk.chunk_id,
+                    score=sc,
+                    text=chunk.text,
+                    citation=chunk.citation,
+                    metadata=chunk.metadata,
+                    rank=i,
+                )
+            )
+
+        reranked_ms = (time.perf_counter() - reranked_start) * 1000
+        return out, embed_time, retrieve_time, reranked_ms, embedding_cache_hit, retrieval_cache_hit
