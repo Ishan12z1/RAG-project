@@ -1,22 +1,32 @@
 from fastapi import FastAPI, Request
-from app.routes import router
-from app.deps import get_app_version
-from app.utils import configure_logging
-from uuid import uuid4
-from error_handler import RAGAppError
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from app.utils import configure_logging,log_json
-from app.schemas import ErrorDetail,ErrorResponse
+from fastapi.middleware.cors import CORSMiddleware
+from uuid import uuid4
+
+from app.routes import router
+from app.deps import get_app_version, get_runtime_config
+from app.schemas import ErrorResponse, ErrorDetail
+from app.utils import configure_logging, log_json
+from error_handler import RAGAppError
+
 def create_app()->FastAPI:
     configure_logging()
-
+    cfg = get_runtime_config()
     app=FastAPI(
         title="RAG Assistant API",
         version=get_app_version(),
         description="FastAPI service for RAG chatbot"
     )
     
+    cors_cfg = cfg.get("cors", {}) or {}
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_cfg.get("allow_origins", []),
+        allow_credentials=bool(cors_cfg.get("allow_credentials", True)),
+        allow_methods=cors_cfg.get("allow_methods", ["*"]),
+        allow_headers=cors_cfg.get("allow_headers", ["*"]),
+    )
     app.include_router(router)
 
     @app.middleware("http")
