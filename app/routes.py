@@ -14,6 +14,7 @@ from app.deps import get_app_version,get_pipeline
 from rag.chat import RAGPipeline
 from app.utils import get_used_citations,format_answer, log_json
 from error_handler.errors import EmptyQueryError
+from app.metrics import runtime_metrics
 
 router=APIRouter()
 
@@ -24,6 +25,11 @@ def health():
     service="rag-assistant",
     version=get_app_version(),
 )
+
+@router.get("/metrics", response_model=MetricsResponse)
+def metrics():
+    snap = runtime_metrics.snapshot()
+    return MetricsResponse(**snap)
 
 @router.post("/chat", response_model=ChatResponse,
                  responses={
@@ -113,6 +119,11 @@ def chat(
         }
     )
 
-
+    runtime_metrics.record_request(
+        total_ms=result.timings_ms.total,
+        abstained=abstained,
+        embedding_cache_hit=getattr(result.cache_hits, "embedding", None),
+        retrieval_cache_hit=getattr(result.cache_hits, "retrieval", None),
+    )
     return response
 

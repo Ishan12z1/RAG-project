@@ -9,6 +9,7 @@ from app.deps import get_app_version, get_runtime_config
 from app.schemas import ErrorResponse, ErrorDetail
 from app.utils import configure_logging, log_json
 from error_handler import RAGAppError
+from app.metrics import runtime_metrics
 
 def create_app()->FastAPI:
     configure_logging()
@@ -39,7 +40,7 @@ def create_app()->FastAPI:
     @app.exception_handler(RAGAppError)
     async def handle_rag_app_error(request: Request, exc: RAGAppError):
         request_id = getattr(request.state, "request_id", None)
-
+        runtime_metrics.record_error()
         log_json(
             {
                 "event": "request_error",
@@ -61,7 +62,7 @@ def create_app()->FastAPI:
     @app.exception_handler(RequestValidationError)
     async def handle_validation_error(request: Request, exc: RequestValidationError):
         request_id = getattr(request.state, "request_id", None)
-
+        runtime_metrics.record_error()
         log_json(
             {
                 "event": "request_error",
@@ -87,7 +88,7 @@ def create_app()->FastAPI:
     @app.exception_handler(Exception)
     async def handle_unexpected_error(request: Request, exc: Exception):
         request_id = getattr(request.state, "request_id", None)
-
+        runtime_metrics.record_error()
         log_json(
             {
                 "event": "request_error",

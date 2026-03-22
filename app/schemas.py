@@ -49,7 +49,10 @@ class HealthResponse(BaseModel):
 
 class MetricsResponse(BaseModel):
     requests_total: int
-    cache_hit_rate: Optional[float] = None
+    errors_total: int = 0
+    abstain_total: int = 0
+    embedding_cache_hit_rate: Optional[float] = None
+    retrieval_cache_hit_rate: Optional[float] = None
     p50_ms: Optional[float] = None
     p95_ms: Optional[float] = None
 
