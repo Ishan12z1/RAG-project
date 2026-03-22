@@ -128,6 +128,7 @@ class RAGPipeline:
                 generate=generate_ms,
                 total=total_ms,
             ),
+            versions=self.versions,
             cache_hits=CacheHitInfo(
             embedding=embedding_cache_hit,
             retrieval=retrieval_cache_hit,
