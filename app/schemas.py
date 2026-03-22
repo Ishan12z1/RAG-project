@@ -41,10 +41,27 @@ class ChatResponse(BaseModel):
     debug: Optional[DebugInfo] = None
 
 
+class HealthCheck(BaseModel):
+    ready: bool
+    detail: Optional[str] = None
+
+
+class HealthDetails(BaseModel):
+    config: HealthCheck
+    pipeline: HealthCheck
+    dense_index: HealthCheck
+    chunk_store: HealthCheck
+    bm25: HealthCheck
+    reranker: HealthCheck
+    generation_provider: HealthCheck
+    versions: HealthCheck
+
+
 class HealthResponse(BaseModel):
     status: str
     service: str
     version: str
+    details: HealthDetails
 
 
 class MetricsResponse(BaseModel):

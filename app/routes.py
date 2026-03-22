@@ -15,16 +15,12 @@ from rag.chat import RAGPipeline
 from app.utils import get_used_citations,format_answer, log_json
 from error_handler.errors import EmptyQueryError
 from app.metrics import runtime_metrics
-
+from app.health import build_health_response 
 router=APIRouter()
 
 @router.get("/health",response_model=HealthResponse)
 def health():
-    return  HealthResponse(
-    status="ok",
-    service="rag-assistant",
-    version=get_app_version(),
-)
+    return build_health_response()
 
 @router.get("/metrics", response_model=MetricsResponse)
 def metrics():

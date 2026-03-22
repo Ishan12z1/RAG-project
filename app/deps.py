@@ -10,7 +10,8 @@ def get_runtime_config() -> dict:
         return yaml.safe_load(f)
     
 def get_app_version()->str:
-    return "0.1.0"
+    cfg=get_runtime_config()
+    return str(cfg.get("versions",{}).get("app_version","1.0"))
 
 # using LRU cache here so that we won't need to load retriever, reranke, models on every request.
 @lru_cache 
