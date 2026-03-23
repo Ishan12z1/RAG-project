@@ -16,3 +16,5 @@ scikit-learn
 fastapi
 uvicorn
 pydantic
+requests
+streamlit
