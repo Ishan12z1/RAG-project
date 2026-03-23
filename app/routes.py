@@ -88,7 +88,7 @@ def chat(
 
     answer_text = format_answer(result.parsed_output)
     citations = get_used_citations(result)
-    abstained = result.parsed_output.mode != "answer"
+    abstained = result.parsed_output.mode == "abstain"
 
     schema_citations = [
         SchemaCitation(
@@ -96,6 +96,8 @@ def chat(
             title=c.title,
             section=c.section,
             chunk_id=c.chunk_id,
+            doc_id=c.doc_id,
+            url=c.url,
         )
         for c in citations
     ]
@@ -137,6 +139,9 @@ def chat(
             "history_turns": len(history),
             "effective_query": result.context.get("effective_query"),
             "abstained": abstained,
+            "schema_valid": result.parsed_output.schema_valid,
+            "outcome_bucket": result.parsed_output.mode,
+            "abstain_precheck": result.context.get("abstain_precheck"),
             "parsed_mode": result.parsed_output.mode,
             "parse_warnings": result.parsed_output.parse_warnings,
             "citation_count": len(schema_citations),
@@ -165,7 +170,8 @@ def chat(
 
     runtime_metrics.record_request(
         total_ms=result.timings_ms.total,
-        abstained=abstained,
+        mode=result.parsed_output.mode,
+        schema_valid=result.parsed_output.schema_valid,
         embedding_cache_hit=getattr(result.cache_hits, "embedding", None),
         retrieval_cache_hit=getattr(result.cache_hits, "retrieval", None),
     )

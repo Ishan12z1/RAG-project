@@ -11,7 +11,10 @@ class RuntimeMetrics:
 
         self.requests_total = 0
         self.errors_total = 0
+        self.answer_total = 0
         self.abstain_total = 0
+        self.parse_error_total = 0
+        self.schema_valid_total = 0
 
         self.embedding_cache_hits = 0
         self.embedding_cache_misses = 0
@@ -25,15 +28,23 @@ class RuntimeMetrics:
         self,
         *,
         total_ms: Optional[float],
-        abstained: bool,
+        mode: str,
+        schema_valid: bool,
         embedding_cache_hit: Optional[bool],
         retrieval_cache_hit: Optional[bool],
     ) -> None:
         with self._lock:
             self.requests_total += 1
 
-            if abstained:
+            if mode == "answer":
+                self.answer_total += 1
+            elif mode == "abstain":
                 self.abstain_total += 1
+            elif mode == "parse_error":
+                self.parse_error_total += 1
+
+            if schema_valid:
+                self.schema_valid_total += 1
 
             if total_ms is not None:
                 self.latency_samples_ms.append(float(total_ms))
@@ -75,7 +86,12 @@ class RuntimeMetrics:
             return {
                 "requests_total": self.requests_total,
                 "errors_total": self.errors_total,
+                "answer_total": self.answer_total,
                 "abstain_total": self.abstain_total,
+                "parse_error_total": self.parse_error_total,
+                "schema_valid_rate": (
+                    self.schema_valid_total / self.requests_total if self.requests_total > 0 else None
+                ),
                 "embedding_cache_hit_rate": (
                     self.embedding_cache_hits / embedding_total if embedding_total > 0 else None
                 ),

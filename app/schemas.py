@@ -20,10 +20,12 @@ class ChatbotRequest(BaseModel):
     top_k: int = Field(default=5, ge=1, le=20)
 
 class Citation(BaseModel):
-    source:Optional[str]=None
-    title:Optional[str]=None
-    section:Optional[str]=None
-    chunk_id:Optional[str]=None
+    source: Optional[str] = None
+    title: Optional[str] = None
+    section: Optional[str] = None
+    chunk_id: Optional[str] = None
+    doc_id: Optional[str] = None
+    url: Optional[str] = None
 
 
 class TimingInfo(BaseModel):
@@ -81,7 +83,10 @@ class HealthResponse(BaseModel):
 class MetricsResponse(BaseModel):
     requests_total: int
     errors_total: int = 0
+    answer_total: int = 0
     abstain_total: int = 0
+    parse_error_total: int = 0
+    schema_valid_rate: Optional[float] = None
     embedding_cache_hit_rate: Optional[float] = None
     retrieval_cache_hit_rate: Optional[float] = None
     p50_ms: Optional[float] = None
