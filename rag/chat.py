@@ -12,6 +12,7 @@ from rag.prompt import (
     build_contextual_query,
     build_evidence_block,
     build_prompt,
+    build_repair_prompt,
 )
 from rag.parsing import parse_model_output
 from rag.abstain import should_abstain
@@ -38,6 +39,8 @@ class RAGPipeline:
         timeout_cfg = self.config.get("timeouts", {}) or {}
         self.model = CollabModel(
             self.config["api_url"],
+            max_new_tokens=int(self.config.get("generation", {}).get("max_new_tokens", 500)),
+            temperature=float(self.config.get("generation", {}).get("temperature", 0.2)),
             timeout_s=float(timeout_cfg.get("generation_timeout_s", 60)),
             max_retries=int(timeout_cfg.get("generation_max_retries", 0)),
             backoff_s=float(timeout_cfg.get("generation_backoff_s", 0.0)),
@@ -65,48 +68,48 @@ class RAGPipeline:
                     f"Retrieved chunk {ch.chunk_id} has invalid citation format."
                 )
 
-        abstain_decision = should_abstain(query=query, retrieved=chunks)
-        if abstain_decision.abstain:
-            total_ms = (time.perf_counter() - total_start) * 1000
-            parsed_output = ParsedAnswer(
-                mode="abstain",
-                bullets=[],
-                citation_by_bullets=[],
-                resolved_chunk_ids_by_bullet=[],
-                abstain_reason="I can't answer that from the available source material.",
-                needs=[
-                    "Ask about information covered in the indexed source material",
-                    "Be more specific about the diabetes-related topic you want",
-                ],
-                raw_text="ABSTAIN: I can't answer that from the available source material.",
-                parse_warnings=list(abstain_decision.reasons),
-            )
-            return PipelineResult(
-                parsed_output=parsed_output,
-                retrieved_chunks=chunks,
-                timings_ms=PipelineTimings(
-                    embed=embed_ms,
-                    retrieve=retrieve_ms,
-                    rerank=rerank_ms,
-                    generate=None,
-                    total=total_ms,
-                ),
-                versions=self.versions,
-                cache_hits=CacheHitInfo(
-                    embedding=embedding_cache_hit,
-                    retrieval=retrieval_cache_hit,
-                ),
-                cache_stats={
-                    "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
-                    "retrieval": self.hybrid_retriever.get_retrieval_cache_stats(),
-                },
-                context={
-                    "conversation_context": conversation_context,
-                    "effective_query": retrieval_query,
-                    "abstain_reasons": abstain_decision.reasons,
-                    "abstain_signals": abstain_decision.signals,
-                },
-            )
+        # abstain_decision = should_abstain(query=retrieval_query, retrieved=chunks)
+        # if abstain_decision.abstain:
+        #     total_ms = (time.perf_counter() - total_start) * 1000
+        #     abstain_needs = [
+        #         "Ask about information covered in the indexed source material",
+        #         "Be more specific about the topic, entity, or time period you want",
+        #     ]
+        #     parsed_output = ParsedAnswer(
+        #         mode="abstain",
+        #         segments=[],
+        #         needs=abstain_needs,
+        #         raw_text='{"mode":"abstain","needs":["Ask about information covered in the indexed source material","Be more specific about the topic, entity, or time period you want"]}',
+        #         parse_warnings=list(abstain_decision.reasons),
+        #         schema_valid=True,
+        #     )
+        #     return PipelineResult(
+        #         parsed_output=parsed_output,
+        #         retrieved_chunks=chunks,
+        #         timings_ms=PipelineTimings(
+        #             embed=embed_ms,
+        #             retrieve=retrieve_ms,
+        #             rerank=rerank_ms,
+        #             generate=None,
+        #             total=total_ms,
+        #         ),
+        #         versions=self.versions,
+        #         cache_hits=CacheHitInfo(
+        #             embedding=embedding_cache_hit,
+        #             retrieval=retrieval_cache_hit,
+        #         ),
+        #         cache_stats={
+        #             "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
+        #             "retrieval": self.hybrid_retriever.get_retrieval_cache_stats(),
+        #         },
+        #         context={
+        #             "conversation_context": conversation_context,
+        #             "effective_query": retrieval_query,
+        #             "abstain_precheck": True,
+        #             "abstain_reasons": abstain_decision.reasons,
+        #             "abstain_signals": abstain_decision.signals,
+        #         },
+        #     )
         evidence_block, evidence_items = build_evidence_block(chunks)
         prompt=build_prompt(query, evidence_block, conversation_context)
         try:
@@ -133,6 +136,42 @@ class RAGPipeline:
             ) from e
         
         parsed_output=parse_model_output(raw,evidence_items)
+        repair_attempted = False
+
+        if parsed_output.mode == "parse_error":
+            repair_attempted = True
+            repair_prompt = build_repair_prompt(
+                question=query,
+                conversation_context=conversation_context or "None.",
+                evidence_block=evidence_block,
+                previous_output=raw,
+                parse_warnings=parsed_output.parse_warnings,
+            )
+            try:
+                repair_raw = self.model.get_response(repair_prompt)
+                repaired_output = parse_model_output(repair_raw, evidence_items)
+                if repaired_output.mode != "parse_error":
+                    parsed_output = repaired_output
+                else:
+                    parsed_output.parse_warnings.append("repair_attempt_failed")
+            except requests.Timeout as e:
+                raise GenerationError(
+                    message="Generation timed out.",
+                    status_code=504,
+                    code="GENERATION_TIMEOUT",
+                ) from e
+            except requests.RequestException as e:
+                raise GenerationError(
+                    message="Generation provider request failed.",
+                    status_code=502,
+                    code="GENERATION_FAILED",
+                ) from e
+            except Exception as e:
+                raise GenerationError(
+                    message="Failed to generate answer.",
+                    status_code=500,
+                    code="GENERATION_FAILED",
+                ) from e
 
         total_ms = (time.perf_counter() - total_start) * 1000
 
@@ -158,6 +197,8 @@ class RAGPipeline:
             context={
                 "conversation_context": conversation_context,
                 "effective_query": retrieval_query,
+                "abstain_precheck": False,
+                "generation_repair_attempted": repair_attempted,
             },
         )
 

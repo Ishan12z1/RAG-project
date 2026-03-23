@@ -5,15 +5,14 @@ from typing import Dict, List, Sequence, Tuple
 from rag.retrieval.retrieve import RetrievedChunk
 from rag.utils.contracts import EvidenceItem
 
-
 CITATION_TAG_PREFIX = "C"
-PROMPT_VERSION = "v3"
+PROMPT_VERSION = "v5-structured-json"
 
 
 def assign_citation_tags(chunks: Sequence[RetrievedChunk]) -> List[EvidenceItem]:
     items: List[EvidenceItem] = []
     for i, ch in enumerate(chunks, start=1):
-        tag = f"[{CITATION_TAG_PREFIX}{i}]"
+        tag = f"{CITATION_TAG_PREFIX}{i}"
         items.append(
             EvidenceItem(
                 citation_tag=tag,
@@ -38,8 +37,8 @@ def _truncate(text: str, max_chars: int) -> str:
 def build_evidence_block(
     chunks: Sequence[RetrievedChunk],
     *,
-    max_chunks: int = 8,
-    max_chars_per_chunk: int = 1200,
+    max_chunks: int = 5,
+    max_chars_per_chunk: int = 900,
 ) -> Tuple[str, List[EvidenceItem]]:
     use = list(chunks)[:max_chunks]
     items = assign_citation_tags(use)
@@ -49,11 +48,8 @@ def build_evidence_block(
         c = it.citation
         header = (
             f"{it.citation_tag} "
-            f"doc_id={getattr(c, 'doc_id', 'unknown')} | "
             f"title={getattr(c, 'title', 'unknown')} | "
             f"section={getattr(c, 'section', 'unknown')} | "
-            f"chunk_id={getattr(c, 'chunk_id', 'unknown')} | "
-            f"source={getattr(c, 'source', 'unknown')} | "
             f"url={getattr(c, 'url', 'none')}"
         )
         lines.append(header)
@@ -64,28 +60,30 @@ def build_evidence_block(
 
 
 SYSTEM_GROUNDED_QA = (
-    "You are a grounded conversational assistant.\n"
-    "You must follow these rules:\n"
-    "1) Use ONLY the EVIDENCE provided. Do not use outside knowledge.\n"
-    "2) Be helpful and conversational, but stay strictly grounded in the evidence.\n"
-    "3) If the question is unrelated to the available evidence or the evidence is too weak, abstain.\n"
-    "4) Every answer bullet MUST end with citations using the provided evidence tags, like [C1] or [C1, C2].\n"
-    "5) Do not cite anything that is not in the EVIDENCE block.\n"
+    "You are a grounded assistant.\n"
+    "Use only the provided evidence.\n"
+    "Return only valid JSON with no markdown fences and no extra text.\n"
+    "The JSON must match exactly one of these shapes.\n"
+    'Answer mode: {"mode":"answer","segments":[{"text":"...","citations":["C1","C2"]}]}\n'
+    'Abstain mode: {"mode":"abstain","needs":["...","..."]}\n'
+    "Use the recent conversation summary only to resolve follow-up context.\n"
+    "Every answer segment must be supported by the provided evidence tags.\n"
+    "Use only citation tags that appear in the evidence pack.\n"
+    "Do not put citation tags inside segment text.\n"
+    "Do not output bullets, headings, labels, or free-form sections.\n"
+    "If the evidence is insufficient or the request is unsupported by the evidence, choose abstain mode.\n"
 )
 
-
 USER_TEMPLATE = (
-    "RECENT CONVERSATION:\n{conversation}\n\n"
-    "QUESTION:\n{query}\n\n"
-    "EVIDENCE:\n"
-    "{evidence}\n\n"
-    "OUTPUT FORMAT (choose exactly one):\n"
-    "A) Answer (2-4 short bullets in a natural chat tone):\n"
-    "- <helpful grounded point>. [C1]\n"
-    "- <helpful grounded point>. [C1, C2]\n\n"
-    "B) Abstain:\n"
-    "ABSTAIN: I can't answer that from the available source material.\n"
-    "NEED: (1) ... (2) ... (3) ...\n"
+    "CONVERSATION SUMMARY:\n{conversation}\n\n"
+    "USER QUESTION:\n{query}\n\n"
+    "EVIDENCE PACK:\n{evidence}\n\n"
+    "Return strict JSON only.\n"
+    'Every segment object in answer mode must include both "text" and "citations".\n'
+    'Example valid answer JSON: {{"mode":"answer","segments":[{{"text":"...","citations":["C1"]}}]}}\n'
+    "For answer mode, write 1-2 short paragraph-like segments in natural chat language.\n"
+    "Keep the full answer concise, about 2-4 sentences total.\n"
+    "For abstain mode, return 1-3 concrete missing-information needs.\n"
 )
 
 
@@ -128,6 +126,7 @@ def build_contextual_query(
 
     if not history_parts:
         return question.strip()
+
     return " ".join(history_parts + [question.strip()])
 
 
@@ -136,5 +135,31 @@ def build_prompt(question: str, evidence_block: str, conversation_context: str |
         conversation=(conversation_context or "None.").strip(),
         query=question.strip(),
         evidence=evidence_block,
+    )
+    return {"system": SYSTEM_GROUNDED_QA, "user": user}
+
+
+def build_repair_prompt(
+    *,
+    question: str,
+    conversation_context: str,
+    evidence_block: str,
+    previous_output: str,
+    parse_warnings: Sequence[str],
+) -> Dict[str, str]:
+    warning_text = "\n".join(f"- {warning}" for warning in parse_warnings) if parse_warnings else "- unknown_schema_error"
+    user = (
+        "Your previous response was invalid for the required JSON schema.\n\n"
+        f"CONVERSATION SUMMARY:\n{(conversation_context or 'None.').strip()}\n\n"
+        f"USER QUESTION:\n{question.strip()}\n\n"
+        f"EVIDENCE PACK:\n{evidence_block}\n\n"
+        f"PREVIOUS INVALID OUTPUT:\n{previous_output.strip()}\n\n"
+        f"VALIDATION ERRORS:\n{warning_text}\n\n"
+        "Repair the response.\n"
+        "Return strict JSON only.\n"
+        'If mode is "answer", every segment must include both "text" and "citations".\n'
+        'Use only evidence tags from the evidence pack, such as "C1".\n'
+        'Do not place citation tags inside the visible text.\n'
+        'If you cannot support the answer with citations, return {"mode":"abstain","needs":[...]}.'
     )
     return {"system": SYSTEM_GROUNDED_QA, "user": user}

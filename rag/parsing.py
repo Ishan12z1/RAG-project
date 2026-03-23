@@ -1,127 +1,45 @@
 from __future__ import annotations
 
+import json
 import re
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Sequence, Tuple
 
-from rag.utils.contracts import EvidenceItem, ParsedAnswer
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
+from rag.utils.contracts import AnswerSegment, EvidenceItem, ParsedAnswer
 
-# Accept trailing citation block like:
-#   - some claim [C1]
-#   - some claim [C1, C2]
-# Spaces optional around commas / before bracket.
-_CITATION_BRACKET_RE = re.compile(r"\[([^\]]+)\]\s*$")
-_CITATION_TAG_RE = re.compile(r"\bC\d+\b", flags=re.IGNORECASE)
-
-# More tolerant abstain detection
-_ABSTAIN_START_RE = re.compile(r"^\s*ABSTAIN\s*:", flags=re.IGNORECASE)
-_NEED_LINE_RE = re.compile(r"^\s*NEED\s*:\s*(.*)$", flags=re.IGNORECASE)
+_VISIBLE_CITATION_RE = re.compile(r"\[(C\d+(?:\s*,\s*C\d+)*)\]", flags=re.IGNORECASE)
 
 
-def _extract_bullets(text: str) -> List[str]:
-    """
-    Extract bullets from lines beginning with '- '.
-    """
-    lines = [ln.rstrip() for ln in (text or "").splitlines()]
-    bullets: List[str] = []
+class _AnswerSegmentSchema(BaseModel):
+    text: str = Field(min_length=1)
+    citations: List[str] = Field(min_length=1)
 
-    for ln in lines:
-        stripped = ln.lstrip()
-        if stripped.startswith("- "):
-            bullets.append(stripped[2:].strip())
-
-    return bullets
+    model_config = ConfigDict(extra="forbid")
 
 
-def _parse_citations_from_bullet(bullet: str) -> Tuple[str, List[str], Optional[str]]:
-    """
-    Returns:
-        (bullet_without_citations, tags, warning)
+class _StructuredOutputSchema(BaseModel):
+    mode: str
+    segments: List[_AnswerSegmentSchema] = Field(default_factory=list)
+    needs: List[str] = Field(default_factory=list)
 
-    tags are normalized like ["C1", "C2"] with no brackets.
-    """
-    m = _CITATION_BRACKET_RE.search(bullet)
-    if not m:
-        return bullet.strip(), [], "missing_citation_brackets"
+    model_config = ConfigDict(extra="forbid")
 
-    inside = m.group(1)
-    tags = [t.upper() for t in _CITATION_TAG_RE.findall(inside)]
-
-    if not tags:
-        clean = bullet[: m.start()].rstrip()
-        return clean, [], "no_valid_citation_tags"
-
-    clean = bullet[: m.start()].rstrip()
-    return clean, tags, None
-
-
-def _parse_needs_text(needs_text: str) -> List[str]:
-    """
-    Parses NEED content in formats like:
-      NEED: (1) age (2) meds
-      NEED: 1. age 2. meds
-      NEED: age; meds
-      NEED: age, meds
-
-    Keeps this reasonably tolerant without becoming too magical.
-    """
-    text = (needs_text or "").strip()
-    if not text:
-        return []
-
-    # Try numbered patterns first: (1) ..., (2) ...  OR 1. ..., 2. ...
-    numbered_matches = re.findall(
-        r"(?:\(\d+\)|\b\d+\.)\s*([^()]+?)(?=(?:\(\d+\)|\b\d+\.|$))",
-        text,
-        flags=re.IGNORECASE,
-    )
-    if numbered_matches:
-        return [m.strip(" .;-") for m in numbered_matches if m.strip(" .;-")]
-
-    # Fallback: split on semicolons first, then commas if needed.
-    if ";" in text:
-        parts = [p.strip(" .;-") for p in text.split(";")]
-        return [p for p in parts if p]
-
-    if "," in text:
-        parts = [p.strip(" .;-") for p in text.split(",")]
-        return [p for p in parts if p]
-
-    return [text.strip(" .;-")] if text.strip(" .;-") else []
-
-
-def _parse_abstain(text: str) -> Tuple[Optional[str], List[str], List[str]]:
-    """
-    Expected main patterns:
-      ABSTAIN: ...
-      NEED: ...
-
-    Returns:
-        (reason, needs, warnings)
-    """
-    reason: Optional[str] = None
-    needs: List[str] = []
-    warnings: List[str] = []
-
-    lines = [ln.strip() for ln in (text or "").splitlines() if ln.strip()]
-    need_lines: List[str] = []
-
-    for ln in lines:
-        if _ABSTAIN_START_RE.match(ln):
-            reason = re.split(r"^\s*ABSTAIN\s*:\s*", ln, maxsplit=1, flags=re.IGNORECASE)[1].strip()
-        else:
-            m = _NEED_LINE_RE.match(ln)
-            if m:
-                need_lines.append(m.group(1).strip())
-
-    if reason is None:
-        warnings.append("abstain_reason_missing")
-
-    if need_lines:
-        combined_needs = " ".join(need_lines).strip()
-        needs = _parse_needs_text(combined_needs)
-
-    return reason, needs, warnings
+    @model_validator(mode="after")
+    def validate_mode_shape(self) -> "_StructuredOutputSchema":
+        if self.mode == "answer":
+            if not self.segments:
+                raise ValueError("answer mode requires segments")
+            if self.needs:
+                raise ValueError("answer mode cannot include needs")
+            return self
+        if self.mode == "abstain":
+            if self.segments:
+                raise ValueError("abstain mode cannot include segments")
+            if not self.needs:
+                raise ValueError("abstain mode requires needs")
+            return self
+        raise ValueError("mode must be answer or abstain")
 
 
 def _normalize_citation_tag(raw_tag: str) -> str:
@@ -131,118 +49,160 @@ def _normalize_citation_tag(raw_tag: str) -> str:
     return raw.upper()
 
 
-def parse_model_output(
-    raw_text: str,
-    evidence_items: Sequence[EvidenceItem],
-    *,
-    min_bullets: int = 2,
-    max_bullets: int = 5,
-) -> ParsedAnswer:
-    parse_warnings: List[str] = []
+def _strip_visible_citations(text: str) -> Tuple[str, bool]:
+    cleaned = _VISIBLE_CITATION_RE.sub("", text or "")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned, cleaned != (text or "").strip()
 
+
+def _extract_json_text(raw_text: str) -> Tuple[str, List[str]]:
+    text = (raw_text or "").strip()
+    warnings: List[str] = []
+    if not text:
+        return "", warnings
+
+    if text.startswith("```"):
+        lines = text.splitlines()
+        if len(lines) >= 3 and lines[-1].strip() == "```":
+            text = "\n".join(lines[1:-1]).strip()
+            warnings.append("json_wrapped_in_code_fence")
+
+    start = text.find("{")
+    end = text.rfind("}")
+    if start > 0 or end != len(text) - 1:
+        if start >= 0 and end > start:
+            text = text[start : end + 1]
+            warnings.append("json_extracted_from_surrounding_text")
+
+    return text, warnings
+
+
+def _build_tag_maps(evidence_items: Sequence[EvidenceItem]) -> Tuple[set[str], Dict[str, str]]:
+    allowed_tags: set[str] = set()
     tag_to_chunk_id: Dict[str, str] = {}
-    allowed_tags = set()
 
     for it in evidence_items:
         tag = _normalize_citation_tag(getattr(it, "citation_tag", ""))
         if not tag:
             continue
-
         allowed_tags.add(tag)
-
         citation_obj = getattr(it, "citation", None)
         chunk_id = getattr(citation_obj, "chunk_id", "") if citation_obj is not None else ""
         tag_to_chunk_id[tag] = chunk_id
 
-    text = (raw_text or "").strip()
+    return allowed_tags, tag_to_chunk_id
 
-    if not text:
+
+def _parse_structured_json(raw_text: str) -> Tuple[_StructuredOutputSchema | None, List[str]]:
+    warnings: List[str] = []
+    json_text, extraction_warnings = _extract_json_text(raw_text)
+    warnings.extend(extraction_warnings)
+
+    if not json_text:
+        warnings.append("empty_model_output")
+        return None, warnings
+
+    try:
+        payload = json.loads(json_text)
+    except json.JSONDecodeError as exc:
+        warnings.append(f"json_decode_error:{exc.msg}")
+        return None, warnings
+
+    try:
+        return _StructuredOutputSchema.model_validate(payload), warnings
+    except ValidationError as exc:
+        for err in exc.errors():
+            location = ".".join(str(part) for part in err.get("loc", ())) or "root"
+            warnings.append(f"schema_validation_error:{location}:{err.get('msg', 'invalid')}")
+        return None, warnings
+
+
+def parse_model_output(raw_text: str, evidence_items: Sequence[EvidenceItem]) -> ParsedAnswer:
+    structured, warnings = _parse_structured_json(raw_text)
+    if structured is None:
         return ParsedAnswer(
             mode="parse_error",
-            bullets=[],
-            citation_by_bullets=[],
-            resolved_chunk_ids_by_bullet=[],
-            abstain_reason=None,
+            segments=[],
             needs=[],
             raw_text=raw_text,
-            parse_warnings=["empty_model_output"],
+            parse_warnings=warnings,
+            schema_valid=False,
         )
 
-    # Abstain mode first
-    if _ABSTAIN_START_RE.match(text):
-        reason, needs, abstain_warnings = _parse_abstain(text)
+    allowed_tags, tag_to_chunk_id = _build_tag_maps(evidence_items)
+
+    if structured.mode == "abstain":
+        cleaned_needs = [need.strip() for need in structured.needs if need and need.strip()]
         return ParsedAnswer(
             mode="abstain",
-            bullets=[],
-            citation_by_bullets=[],
-            resolved_chunk_ids_by_bullet=[],
-            abstain_reason=reason,
-            needs=needs,
+            segments=[],
+            needs=cleaned_needs,
             raw_text=raw_text,
-            parse_warnings=abstain_warnings,
+            parse_warnings=warnings,
+            schema_valid=True,
         )
 
-    bullets_raw = _extract_bullets(text)
-    if not bullets_raw:
-        return ParsedAnswer(
-            mode="parse_error",
-            bullets=[],
-            citation_by_bullets=[],
-            resolved_chunk_ids_by_bullet=[],
-            abstain_reason=None,
-            needs=[],
-            raw_text=raw_text,
-            parse_warnings=["no_bullets_found"],
-        )
+    parse_warnings = list(warnings)
+    segments: List[AnswerSegment] = []
 
-    if not (min_bullets <= len(bullets_raw) <= max_bullets):
-        parse_warnings.append(f"bullet_count_out_of_range:{len(bullets_raw)}")
-
-    bullets: List[str] = []
-    citation_by_bullets: List[List[str]] = []
-    resolved_chunk_ids_by_bullet: List[List[str]] = []
-
-    for idx, bullet in enumerate(bullets_raw, start=1):
-        clean_bullet, tags, warn = _parse_citations_from_bullet(bullet)
-
-        if warn:
-            parse_warnings.append(f"bullet_{idx}_{warn}")
-
-        valid_tags: List[str] = []
-        invalid_tags: List[str] = []
-
-        for tag in tags:
-            if tag in allowed_tags:
-                valid_tags.append(tag)
-            else:
-                invalid_tags.append(tag)
-
+    for idx, item in enumerate(structured.segments, start=1):
+        normalized_tags = [_normalize_citation_tag(tag) for tag in item.citations]
+        invalid_tags = [tag for tag in normalized_tags if tag not in allowed_tags]
         if invalid_tags:
-            parse_warnings.append(f"bullet_{idx}_invalid_tags:{','.join(invalid_tags)}")
+            parse_warnings.append(f"segment_{idx}_invalid_tags:{','.join(invalid_tags)}")
+            return ParsedAnswer(
+                mode="parse_error",
+                segments=[],
+                needs=[],
+                raw_text=raw_text,
+                parse_warnings=parse_warnings,
+                schema_valid=False,
+            )
 
-        if not valid_tags:
-            parse_warnings.append(f"bullet_{idx}_no_valid_tags_after_validation")
+        deduped_tags: List[str] = []
+        for tag in normalized_tags:
+            if tag not in deduped_tags:
+                deduped_tags.append(tag)
 
-        resolved_chunk_ids = [
-            tag_to_chunk_id[tag]
-            for tag in valid_tags
-            if tag_to_chunk_id.get(tag)
-        ]
+        resolved_chunk_ids = [tag_to_chunk_id[tag] for tag in deduped_tags if tag_to_chunk_id.get(tag)]
+        if len(resolved_chunk_ids) != len(deduped_tags):
+            parse_warnings.append(f"segment_{idx}_unresolved_citation_tag")
+            return ParsedAnswer(
+                mode="parse_error",
+                segments=[],
+                needs=[],
+                raw_text=raw_text,
+                parse_warnings=parse_warnings,
+                schema_valid=False,
+            )
 
-        if valid_tags and not resolved_chunk_ids:
-            parse_warnings.append(f"bullet_{idx}_valid_tags_but_no_resolved_chunk_ids")
+        clean_text, removed_visible_tags = _strip_visible_citations(item.text)
+        if removed_visible_tags:
+            parse_warnings.append(f"segment_{idx}_visible_citation_tags_removed")
+        if not clean_text:
+            parse_warnings.append(f"segment_{idx}_text_empty_after_cleanup")
+            return ParsedAnswer(
+                mode="parse_error",
+                segments=[],
+                needs=[],
+                raw_text=raw_text,
+                parse_warnings=parse_warnings,
+                schema_valid=False,
+            )
 
-        bullets.append(clean_bullet)
-        citation_by_bullets.append(valid_tags)
-        resolved_chunk_ids_by_bullet.append(resolved_chunk_ids)
+        segments.append(
+            AnswerSegment(
+                text=clean_text,
+                citations=deduped_tags,
+                resolved_chunk_ids=resolved_chunk_ids,
+            )
+        )
 
     return ParsedAnswer(
         mode="answer",
-        bullets=bullets,
-        citation_by_bullets=citation_by_bullets,
-        resolved_chunk_ids_by_bullet=resolved_chunk_ids_by_bullet,
-        abstain_reason=None,
+        segments=segments,
         needs=[],
         raw_text=raw_text,
         parse_warnings=parse_warnings,
+        schema_valid=True,
     )

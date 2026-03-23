@@ -98,63 +98,46 @@ class AbstainConfig:
 
 
 @dataclass(frozen=True)
+class AnswerSegment:
+    text: str
+    citations: List[str] = field(default_factory=list)
+    resolved_chunk_ids: List[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
 class ParsedAnswer:
-    '''
-mode: str # "answer" or "abstain": tells whether the model produced a normal answer or an abstention. \n
-bullets: List[str]: the answer content split into bullets (empty if abstain).\n
-citations_by_bullet: List[List[str]]: for each bullet, the list of citation tags used (e.g., ["C1","C2"]).\n
-resolved_chunk_ids_by_bullet: List[List[str]]: same structure as above, but citation tags mapped to real chunk_ids (used for eval/logging).\n
-abstain_reason: Optional[str]: if abstained, the text after ABSTAIN:; otherwise None.\n
-needs: List[str]: if abstained, the clarifying items after NEED:; otherwise empty.\n
-raw_text: str: the exact raw model output (always stored for debugging).\n
-parse_warnings: List[str]: parser flags like missing citations, invalid tags, wrong bullet count, etc.\n
-    '''
     """
-    Internal parsed representation of the model output.
+    Internal structured representation of the model output.
 
     mode:
-        "answer"   -> normal grounded answer
-        "abstain"  -> model abstained
-        "parse_error" -> model output could not be parsed into a valid answer/abstention
+        "answer" -> validated grounded answer segments
+        "abstain" -> validated abstention request
+        "parse_error" -> invalid or unusable model output
     """
 
     mode: Literal["answer", "abstain", "parse_error"]
-    bullets: List[str] = field(default_factory=list)
-    citation_by_bullets: List[List[str]] = field(default_factory=list)
-    resolved_chunk_ids_by_bullet: List[List[str]] = field(default_factory=list)
-    abstain_reason: Optional[str] = None
+    segments: List[AnswerSegment] = field(default_factory=list)
     needs: List[str] = field(default_factory=list)
     raw_text: str = ""
     parse_warnings: List[str] = field(default_factory=list)
+    schema_valid: bool = False
 
     def __post_init__(self) -> None:
         if self.mode == "answer":
-            if self.abstain_reason is not None:
-                self.parse_warnings.append("answer_mode_with_abstain_reason")
+            if not self.segments:
+                self.parse_warnings.append("answer_mode_without_segments")
             if self.needs:
                 self.parse_warnings.append("answer_mode_with_needs")
-
-            if len(self.citation_by_bullets) != len(self.bullets):
-                self.parse_warnings.append(
-                    f"citation_by_bullets_length_mismatch:{len(self.citation_by_bullets)}!={len(self.bullets)}"
-                )
-
-            if len(self.resolved_chunk_ids_by_bullet) != len(self.bullets):
-                self.parse_warnings.append(
-                    f"resolved_chunk_ids_by_bullet_length_mismatch:{len(self.resolved_chunk_ids_by_bullet)}!={len(self.bullets)}"
-                )
-
+            for idx, segment in enumerate(self.segments, start=1):
+                if not segment.text.strip():
+                    self.parse_warnings.append(f"segment_{idx}_text_missing")
+                if not segment.citations:
+                    self.parse_warnings.append(f"segment_{idx}_citations_missing")
         elif self.mode == "abstain":
-            if self.bullets:
-                self.parse_warnings.append("abstain_mode_with_bullets")
-            if self.citation_by_bullets:
-                self.parse_warnings.append("abstain_mode_with_citations")
-            if self.resolved_chunk_ids_by_bullet:
-                self.parse_warnings.append("abstain_mode_with_resolved_chunk_ids")
-
+            if self.segments:
+                self.parse_warnings.append("abstain_mode_with_segments")
         elif self.mode == "parse_error":
-            # Parse-error is intentionally permissive, but still useful to flag.
-            if self.abstain_reason is not None and self.bullets:
+            if self.segments and self.needs:
                 self.parse_warnings.append("parse_error_with_mixed_answer_and_abstain_fields")
 
 
