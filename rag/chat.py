@@ -7,14 +7,20 @@ from rag.abstain import should_abstain
 from rag.retrieval import BM25Index,ChunkStore,HybridRerankRetriever,HybridRetriever
 from rag.rerank.cross_encoder_reranker_API import CrossEncoderReranker
 import yaml
-from rag.prompt import build_evidence_block,build_prompt
+from rag.prompt import (
+    build_conversation_context,
+    build_contextual_query,
+    build_evidence_block,
+    build_prompt,
+)
 from rag.parsing import parse_model_output
 from rag.abstain import should_abstain
 from rag.utils.versioning import build_pipeline_versions
-from rag.utils.contracts import PipelineResult, Citation, PipelineTimings,CacheHitInfo
+from rag.utils.contracts import PipelineResult, Citation, PipelineTimings,CacheHitInfo, ParsedAnswer
 from error_handler.errors import RetrievalError,GenerationError
 import time
 import requests
+from typing import Sequence
 
 
 class RAGPipeline:
@@ -41,12 +47,14 @@ class RAGPipeline:
             dense_retriever=self.hybrid_retriever.dense,
             reranker=self.reranker,
         )
-    def run(self,query:str,top_k:int=5):
+    def run(self, query: str, top_k: int = 5, history: Sequence[dict[str, str]] | None = None):
 
         total_start = time.perf_counter()
+        conversation_context = build_conversation_context(history)
+        retrieval_query = build_contextual_query(query, history)
         try:
             chunks, embed_ms, retrieve_ms, rerank_ms, embedding_cache_hit, retrieval_cache_hit = (
-                    self.hybrid_retriever_reranker.retrieve(query=query, top_k=top_k)
+                    self.hybrid_retriever_reranker.retrieve(query=retrieval_query, top_k=top_k)
             )
         except Exception as e:
             raise RetrievalError("Failed to retrieve supporting context.") from e
@@ -57,40 +65,50 @@ class RAGPipeline:
                     f"Retrieved chunk {ch.chunk_id} has invalid citation format."
                 )
 
-        abstained=should_abstain(query=query,retrieved=chunks)
-        # if abstained:
-        #     total_ms = (time.perf_counter() - total_start) * 1000
-        #     parsed= ParsedAnswer(
-        #         mode="abstain",
-        #         bullets=[],
-        #         citation_by_bullets=[],
-        #         resolved_chunk_ids_by_bullet=[],
-        #         abstain_reason="Not enough evidence for this query",
-        #         needs=[],
-        #         raw_text="I can't answer this query.",
-        #         parse_warnings=["proper evidence not found"],
-        #     )
-        #     return PipelineResult(
-        #         parsed_output=parsed,
-        #         retrieved_chunks=chunks,
-        #         timings_ms=PipelineTimings(
-        #             embed=None,
-        #             retrieve=retrieve_ms,
-        #             rerank=None,
-        #             generate=None,
-        #             total=total_ms,
-        #         ),
-                # cache_hits=CacheHitInfo(
-                # embedding=embedding_cache_hit,
-                # retrieval=None,
-                # ),
-                # cache_stats={
-                # "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
-                # "retrieval": self.hybrid_retriever.get_retrieval_cache_stats(),
-                # },
-        #        )
+        abstain_decision = should_abstain(query=query, retrieved=chunks)
+        if abstain_decision.abstain:
+            total_ms = (time.perf_counter() - total_start) * 1000
+            parsed_output = ParsedAnswer(
+                mode="abstain",
+                bullets=[],
+                citation_by_bullets=[],
+                resolved_chunk_ids_by_bullet=[],
+                abstain_reason="I can't answer that from the available source material.",
+                needs=[
+                    "Ask about information covered in the indexed source material",
+                    "Be more specific about the diabetes-related topic you want",
+                ],
+                raw_text="ABSTAIN: I can't answer that from the available source material.",
+                parse_warnings=list(abstain_decision.reasons),
+            )
+            return PipelineResult(
+                parsed_output=parsed_output,
+                retrieved_chunks=chunks,
+                timings_ms=PipelineTimings(
+                    embed=embed_ms,
+                    retrieve=retrieve_ms,
+                    rerank=rerank_ms,
+                    generate=None,
+                    total=total_ms,
+                ),
+                versions=self.versions,
+                cache_hits=CacheHitInfo(
+                    embedding=embedding_cache_hit,
+                    retrieval=retrieval_cache_hit,
+                ),
+                cache_stats={
+                    "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
+                    "retrieval": self.hybrid_retriever.get_retrieval_cache_stats(),
+                },
+                context={
+                    "conversation_context": conversation_context,
+                    "effective_query": retrieval_query,
+                    "abstain_reasons": abstain_decision.reasons,
+                    "abstain_signals": abstain_decision.signals,
+                },
+            )
         evidence_block, evidence_items = build_evidence_block(chunks)
-        prompt=build_prompt(query,evidence_block)
+        prompt=build_prompt(query, evidence_block, conversation_context)
         try:
             generate_start = time.perf_counter()
             raw=self.model.get_response(prompt)
@@ -136,6 +154,10 @@ class RAGPipeline:
             cache_stats={
             "embedding": self.hybrid_retriever.dense.get_embedding_cache_stats(),
             "retrieval": self.hybrid_retriever.get_retrieval_cache_stats(),
+            },
+            context={
+                "conversation_context": conversation_context,
+                "effective_query": retrieval_query,
             },
         )
 

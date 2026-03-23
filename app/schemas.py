@@ -1,12 +1,23 @@
-from pydantic import BaseModel,Field
-from typing import Optional, Any
+from typing import Any, Literal, Optional
 from uuid import UUID
+from pydantic import BaseModel, Field
+
+
+class ChatHistoryTurn(BaseModel):
+    role: Literal["user", "assistant"] = Field(..., description="Speaker role for a prior turn")
+    content: str = Field(..., min_length=1, max_length=2000, description="Turn content")
+
 
 class ChatbotRequest(BaseModel):
-    query:str=Field(...,min_length=1,description="User query")
-    session_id:Optional[UUID]=Field(default=None,description="Optional chat session id")
-    debug:bool=Field(default=False,description="Return extra debug info")   
-    top_k:int=Field(default=5,ge=1,le=20)
+    query: str = Field(..., min_length=1, description="User query")
+    session_id: Optional[UUID] = Field(default=None, description="Optional chat session id")
+    history: list[ChatHistoryTurn] = Field(
+        default_factory=list,
+        max_length=12,
+        description="Optional prior turns for lightweight multi-turn continuity",
+    )
+    debug: bool = Field(default=False, description="Return extra debug info")
+    top_k: int = Field(default=5, ge=1, le=20)
 
 class Citation(BaseModel):
     source:Optional[str]=None
@@ -30,12 +41,15 @@ class CacheInfo(BaseModel):
 class DebugInfo(BaseModel):
     cache_hits: Optional[CacheInfo] = None
     retrieved_chunks: Optional[list[dict[str, Any]]] = None
+    conversation_context: Optional[str] = None
+    effective_query: Optional[str] = None
     versions: Optional[dict[str, str]] = None
 
 class ChatResponse(BaseModel):
     answer: str
     citations: list[Citation] = Field(default_factory=list)
     abstained: bool = False
+    session_id: Optional[UUID] = None
     request_id: Optional[str] = None
     timings_ms: Optional[TimingInfo] = None
     debug: Optional[DebugInfo] = None
@@ -74,8 +88,8 @@ class MetricsResponse(BaseModel):
     p95_ms: Optional[float] = None
 
 class ErrorDetail(BaseModel):
-    code:str
-    message:str
+    code: str
+    message: str
 
 class ErrorResponse(BaseModel):
     error: ErrorDetail

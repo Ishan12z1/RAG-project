@@ -1,4 +1,8 @@
+from uuid import UUID, uuid4
+
 from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse
+import re
 from app.schemas import (
     TimingInfo,
     ChatbotRequest,
@@ -8,15 +12,48 @@ from app.schemas import (
     Citation as SchemaCitation,
     CacheInfo,
     DebugInfo,
-    ErrorResponse
-)
-from app.deps import get_app_version,get_pipeline
+    ErrorResponse,
+) 
+from app.deps import get_pipeline
 from rag.chat import RAGPipeline
 from app.utils import get_used_citations,format_answer, log_json
 from error_handler.errors import EmptyQueryError
 from app.metrics import runtime_metrics
-from app.health import build_health_response 
+from app.health import build_health_response
+from app.ui import DEMO_HTML
+
+
 router=APIRouter()
+
+def _serialize_history(payload: ChatbotRequest) -> list[dict[str, str]]:
+    return [turn.model_dump() for turn in payload.history]
+
+
+def _serialize_retrieved_chunks(result) -> list[dict]:
+    serialized = []
+    for chunk in result.retrieved_chunks:
+        serialized.append(
+            {
+                "chunk_id": chunk.chunk_id,
+                "score": chunk.score,
+                "rank": chunk.rank,
+                "text": chunk.text,
+                "citation": {
+                    "source": chunk.citation.source,
+                    "title": chunk.citation.title,
+                    "section": chunk.citation.section,
+                    "chunk_id": chunk.citation.chunk_id,
+                    "doc_id": chunk.citation.doc_id,
+                    "url": chunk.citation.url,
+                },
+            }
+        )
+    return serialized
+
+
+@router.get("/", response_class=HTMLResponse, include_in_schema=False)
+def demo():
+    return HTMLResponse(DEMO_HTML)
 
 @router.get("/health",response_model=HealthResponse)
 def health():
@@ -44,7 +81,10 @@ def chat(
     query = payload.query.strip()
     if not query:
         raise EmptyQueryError()
-    result = pipeline.run(query=payload.query, top_k=payload.top_k)
+    session_id: UUID = payload.session_id or uuid4()
+    history = _serialize_history(payload)
+
+    result = pipeline.run(query=query, top_k=payload.top_k, history=history)
 
     answer_text = format_answer(result.parsed_output)
     citations = get_used_citations(result)
@@ -66,12 +106,16 @@ def chat(
                 embedding=result.cache_hits.embedding,
                 retrieval=result.cache_hits.retrieval,
             ),
+            retrieved_chunks=_serialize_retrieved_chunks(result),
+            conversation_context=result.context.get("conversation_context"),
+            effective_query=result.context.get("effective_query"),
             versions=result.versions
         )
     response = ChatResponse(
         answer=answer_text,
         citations=schema_citations,
         abstained=abstained,
+        session_id=session_id,
         request_id=request.state.request_id,
         timings_ms=TimingInfo(
             embed=result.timings_ms.embed,
@@ -87,8 +131,11 @@ def chat(
             "event": "chat_request",
             "request_id": request.state.request_id,
             "path": "/chat",
+            "session_id": str(session_id),
             "query_length": len(payload.query),
             "top_k": payload.top_k,
+            "history_turns": len(history),
+            "effective_query": result.context.get("effective_query"),
             "abstained": abstained,
             "parsed_mode": result.parsed_output.mode,
             "parse_warnings": result.parsed_output.parse_warnings,
@@ -100,6 +147,7 @@ def chat(
             },
             "cache_stats": result.cache_stats,
             "versions": result.versions,
+            "conversation_context": result.context.get("conversation_context"),
             "timings_ms": {
                 "embed": result.timings_ms.embed,
                 "retrieve": result.timings_ms.retrieve,
@@ -122,4 +170,3 @@ def chat(
         retrieval_cache_hit=getattr(result.cache_hits, "retrieval", None),
     )
     return response
-

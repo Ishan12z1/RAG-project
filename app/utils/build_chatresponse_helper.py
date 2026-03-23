@@ -1,12 +1,19 @@
-from rag.utils.contracts import ParsedAnswer, Citation, PipelineResult
+from rag.utils.contracts import Citation, ParsedAnswer, PipelineResult
+
+
+def _render_chat_style_answer(bullets: list[str]) -> str:
+    cleaned = [bullet.strip() for bullet in bullets if bullet and bullet.strip()]
+    if not cleaned:
+        return ""
+    return "\n\n".join(cleaned)
 
 
 def format_answer(parsed: ParsedAnswer) -> str:
     if parsed.mode == "answer":
-        return "\n".join(f"- {b}" for b in parsed.bullets)
+        return _render_chat_style_answer(parsed.bullets)
     if parsed.mode == "abstain":
-        return parsed.abstain_reason or "I don’t have enough evidence to answer safely."
-    return "I couldn’t produce a properly grounded answer from the retrieved evidence."
+        return parsed.abstain_reason or "I can't answer that from the available source material."
+    return "I couldn't produce a properly grounded answer from the retrieved evidence."
 
 
 def get_used_citations(result: PipelineResult) -> list[Citation]:
@@ -20,10 +27,7 @@ def get_used_citations(result: PipelineResult) -> list[Citation]:
                 continue
 
             chunk = chunk_map.get(chunk_id)
-            if chunk is None:
-                continue
-
-            if chunk.citation is None:
+            if chunk is None or chunk.citation is None:
                 continue
 
             seen.add(chunk_id)
